@@ -1,25 +1,226 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>The Tempest</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f7f5f0;
+            color: #1c1c1c;
+            font-family: Georgia, "Times New Roman", serif;
+        }
+
+        header {
+            padding: 35px 7%;
+            border-bottom: 1px solid #1c1c1c;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            letter-spacing: 3px;
+            font-weight: normal;
+        }
+
+        nav a {
+            color: #1c1c1c;
+            text-decoration: none;
+            margin-left: 30px;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero {
+            padding: 100px 7% 110px;
+            max-width: 1100px;
+        }
+
+        .eyebrow {
+            font-family: Arial, sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(60px, 10vw, 140px);
+            font-weight: normal;
+            line-height: 0.9;
+            margin: 0 0 35px;
+        }
+
+        .hero p {
+            font-size: 22px;
+            line-height: 1.5;
+            max-width: 650px;
+        }
+
+        .issue {
+            border-top: 1px solid #1c1c1c;
+            border-bottom: 1px solid #1c1c1c;
+            padding: 60px 7%;
+        }
+
+        .issue-label {
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .issue h2 {
+            font-size: 54px;
+            font-weight: normal;
+            margin: 15px 0;
+        }
+
+        .issue p {
+            font-size: 18px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 15px 25px;
+            border: 1px solid #1c1c1c;
+            color: #1c1c1c;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .button:hover {
+            background: #1c1c1c;
+            color: #f7f5f0;
+        }
+
+        footer {
+            padding: 40px 7%;
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 700px) {
+
+            header {
+                padding: 25px;
+                display: block;
+            }
+
+            nav {
+                margin-top: 20px;
+            }
+
+            nav a {
+                margin-left: 0;
+                margin-right: 20px;
+            }
+
+            .hero {
+                padding: 70px 25px;
+            }
+
+            .issue {
+                padding: 50px 25px;
+            }
+
+        }
+
+    </style>
 </head>
+
 
 <body>
 
-    <h1>The Tempest</h1>
+    <header>
 
-    <h2>MCASOM Student Magazine</h2>
+        <div class="logo">
+            THE TEMPEST
+        </div>
 
-    <p>
-        A student-run magazine of art, poetry,
-        photography, prose, and more.
-    </p>
+        <nav>
+            <a href="2026.html">Issues</a>
+            <a href="#">About</a>
+        </nav>
 
-    <h2>2026 Issue</h2>
+    </header>
 
-    <p>
-        <a href="2026.html">View the 2026 Issue</a>
-    </p>
+
+    <main>
+
+        <section class="hero">
+
+            <div class="eyebrow">
+                Mayo Clinic Alix School of Medicine — Arizona
+            </div>
+
+            <h1>
+                The Tempest
+            </h1>
+
+            <p>
+                A student-run magazine exploring art, poetry,
+                photography, prose, and the many ways medicine
+                intersects with the human experience.
+            </p>
+
+        </section>
+
+
+        <section class="issue">
+
+            <div class="issue-label">
+                Current Issue
+            </div>
+
+            <h2>
+                2026
+            </h2>
+
+            <p>
+                The latest collection of creative work
+                from the students of MCASOM Arizona.
+            </p>
+
+            <a class="button" href="2026.html">
+                Explore the Issue →
+            </a>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        THE TEMPEST · MCASOM ARIZONA
+
+    </footer>
 
 </body>
+
 </html>
