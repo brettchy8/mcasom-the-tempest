@@ -44,11 +44,9 @@
             text-decoration: none;
 
             font-family: Arial, sans-serif;
-
             font-size: 12px;
 
             text-transform: uppercase;
-
             letter-spacing: 1px;
         }
 
@@ -57,11 +55,9 @@
         }
 
         main {
-            max-width: 900px;
-
+            max-width: 1000px;
             margin: 0 auto;
-
-            padding: 100px 30px;
+            padding: 90px 30px;
         }
 
         .label {
@@ -77,7 +73,7 @@
         }
 
         h1 {
-            font-size: clamp(55px, 9vw, 110px);
+            font-size: clamp(50px, 8vw, 100px);
 
             font-weight: normal;
 
@@ -89,8 +85,68 @@
         .author {
             font-size: 22px;
 
-            margin-bottom: 80px;
+            margin-bottom: 65px;
         }
+
+        /*
+         * ORIGINAL WORK
+         */
+
+        .work {
+            border-top: 1px solid #1c1c1c;
+
+            padding: 45px 0 65px;
+
+            text-align: center;
+        }
+
+        .work img {
+            display: block;
+
+            width: 100%;
+
+            max-height: 850px;
+
+            object-fit: contain;
+
+            margin: 0 auto;
+        }
+
+        .work-caption {
+            margin-top: 18px;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 11px;
+
+            letter-spacing: 0.5px;
+
+            color: #555;
+
+            text-align: left;
+        }
+
+        /*
+         * WRITTEN WORK
+         */
+
+        .written-work {
+            border-top: 1px solid #1c1c1c;
+
+            padding: 50px 0 65px;
+
+            font-size: 21px;
+
+            line-height: 1.8;
+
+            max-width: 750px;
+
+            margin: 0 auto;
+        }
+
+        /*
+         * GENERAL SECTIONS
+         */
 
         .section {
             border-top: 1px solid #1c1c1c;
@@ -112,13 +168,17 @@
             margin: 0 0 25px;
         }
 
-        .section p {
+        .section-content {
             font-size: 19px;
 
             line-height: 1.75;
 
-            max-width: 700px;
+            max-width: 750px;
         }
+
+        /*
+         * AUDIO
+         */
 
         .audio {
             margin-top: 25px;
@@ -127,13 +187,17 @@
         audio {
             width: 100%;
 
-            max-width: 600px;
+            max-width: 650px;
         }
+
+        /*
+         * BACK LINK
+         */
 
         .back {
             display: inline-block;
 
-            margin-top: 30px;
+            margin-top: 20px;
 
             color: #1c1c1c;
 
@@ -170,12 +234,24 @@
                 padding: 25px;
             }
 
+            .logo {
+                font-size: 21px;
+            }
+
             main {
                 padding: 65px 25px;
             }
 
             .author {
-                margin-bottom: 55px;
+                margin-bottom: 45px;
+            }
+
+            .work img {
+                max-height: 600px;
+            }
+
+            .written-work {
+                font-size: 19px;
             }
 
         }
@@ -223,6 +299,60 @@
     </div>
 
 
+    <!--
+    =====================================================
+    ORIGINAL VISUAL WORK
+    =====================================================
+    Displays automatically if the work has an image.
+    -->
+
+    {% if page.image %}
+
+    <section class="work">
+
+        <img
+            src="{{ page.image }}"
+            alt="{{ page.image_alt | default: page.title }}">
+
+        {% if page.image_caption %}
+
+        <div class="work-caption">
+
+            {{ page.image_caption }}
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    {% endif %}
+
+
+    <!--
+    =====================================================
+    WRITTEN WORK
+    =====================================================
+    Displays automatically if written_work is provided.
+    -->
+
+    {% if page.written_work %}
+
+    <section class="written-work">
+
+        {{ page.written_work | markdownify }}
+
+    </section>
+
+    {% endif %}
+
+
+    <!--
+    =====================================================
+    ABOUT THE PIECE
+    =====================================================
+    -->
+
     {% if page.about_piece %}
 
     <section class="section">
@@ -231,14 +361,22 @@
             About the Piece
         </h2>
 
-        <div>
+        <div class="section-content">
+
             {{ page.about_piece | markdownify }}
+
         </div>
 
     </section>
 
     {% endif %}
 
+
+    <!--
+    =====================================================
+    ABOUT THE AUTHOR
+    =====================================================
+    -->
 
     {% if page.about_author %}
 
@@ -248,14 +386,22 @@
             About the Author
         </h2>
 
-        <div>
+        <div class="section-content">
+
             {{ page.about_author | markdownify }}
+
         </div>
 
     </section>
 
     {% endif %}
 
+
+    <!--
+    =====================================================
+    AUDIO
+    =====================================================
+    -->
 
     {% if page.audio %}
 
@@ -265,21 +411,25 @@
             Listen
         </h2>
 
-        <p>
-            Listen to the author or creator share this work.
-        </p>
+        <div class="section-content">
 
-        <div class="audio">
+            <p>
+                Listen to the author or creator share this work.
+            </p>
 
-            <audio controls>
+            <div class="audio">
 
-                <source
-                    src="{{ page.audio }}"
-                    type="audio/mpeg">
+                <audio controls>
 
-                Your browser does not support audio playback.
+                    <source
+                        src="{{ page.audio }}"
+                        type="audio/mpeg">
 
-            </audio>
+                    Your browser does not support audio playback.
+
+                </audio>
+
+            </div>
 
         </div>
 
