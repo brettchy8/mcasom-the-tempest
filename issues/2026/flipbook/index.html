@@ -13,13 +13,17 @@
 
     <!-- PDF.js -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
-            type="module"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.min.mjs"
+        type="module">
+    </script>
 
 
     <!-- StPageFlip -->
 
-    <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js">
+    </script>
 
 
     <style>
@@ -95,6 +99,7 @@
         .page {
             background: white;
             overflow: hidden;
+            position: relative;
         }
 
 
@@ -105,23 +110,74 @@
         }
 
 
+        /*
+         * COMPANION LINK
+         *
+         * These links sit above the PDF page.
+         */
+
+        .companion-link {
+            position: absolute;
+
+            right: 5%;
+            bottom: 5%;
+
+            padding: 10px 14px;
+
+            background: rgba(247, 245, 240, 0.95);
+
+            color: #1c1c1c;
+
+            text-decoration: none;
+
+            font-family: Arial, sans-serif;
+
+            font-size: 10px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+
+            border: 1px solid #1c1c1c;
+
+            z-index: 10;
+        }
+
+
+        .companion-link:hover {
+            background: #1c1c1c;
+            color: #f7f5f0;
+        }
+
+
         .controls {
             margin-top: 25px;
+
             display: flex;
+
             align-items: center;
+
             gap: 25px;
+
             font-family: Arial, sans-serif;
         }
 
 
         .controls button {
             background: transparent;
+
             border: 1px solid #777;
+
             color: #f7f5f0;
+
             padding: 10px 18px;
+
             cursor: pointer;
+
             font-size: 12px;
+
             text-transform: uppercase;
+
             letter-spacing: 1px;
         }
 
@@ -134,18 +190,26 @@
 
         #page-number {
             min-width: 90px;
+
             text-align: center;
+
             font-size: 12px;
+
             letter-spacing: 1px;
         }
 
 
         .instructions {
             margin-top: 18px;
+
             font-family: Arial, sans-serif;
+
             color: #aaa;
+
             font-size: 11px;
+
             letter-spacing: 0.5px;
+
             text-align: center;
         }
 
@@ -157,21 +221,31 @@
                 padding: 0 20px;
             }
 
+
             .logo {
                 font-size: 16px;
             }
+
 
             main {
                 min-height: calc(100vh - 65px);
                 padding: 15px 10px 30px;
             }
 
+
             .controls {
                 margin-top: 15px;
             }
 
+
             .instructions {
                 display: none;
+            }
+
+
+            .companion-link {
+                font-size: 9px;
+                padding: 8px 10px;
             }
 
         }
@@ -241,15 +315,52 @@
         "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
 
 
+    /*
+     * =====================================================
+     * COMPANION LINKS
+     * =====================================================
+     *
+     * This is the part future editors will eventually edit.
+     *
+     * The number represents the PDF page number.
+     *
+     * The URL is the companion page.
+     */
+
+    const companionLinks = {
+
+        1: {
+            url: "../../2027/works/example/",
+            text: "Explore this work →"
+        }
+
+    };
+
+
+    /*
+     * =====================================================
+     * PDF
+     * =====================================================
+     */
+
     const pdfURL = "../tempest-2026.pdf";
 
 
-    const loading = document.getElementById("loading");
-    const flipbook = document.getElementById("flipbook");
-    const pageNumber = document.getElementById("page-number");
+    const loading =
+        document.getElementById("loading");
+
+
+    const flipbook =
+        document.getElementById("flipbook");
+
+
+    const pageNumber =
+        document.getElementById("page-number");
+
 
     const previousButton =
         document.getElementById("previous");
+
 
     const nextButton =
         document.getElementById("next");
@@ -260,10 +371,13 @@
         try {
 
             const pdf =
-                await pdfjsLib.getDocument(pdfURL).promise;
+                await pdfjsLib
+                    .getDocument(pdfURL)
+                    .promise;
 
 
-            const totalPages = pdf.numPages;
+            const totalPages =
+                pdf.numPages;
 
 
             loading.textContent =
@@ -274,8 +388,12 @@
                 await getPageDimensions(pdf);
 
 
-            const pageWidth = pageDimensions.width;
-            const pageHeight = pageDimensions.height;
+            const pageWidth =
+                pageDimensions.width;
+
+
+            const pageHeight =
+                pageDimensions.height;
 
 
             const maxWidth =
@@ -296,6 +414,10 @@
             const displayHeight =
                 pageHeight * scale;
 
+
+            /*
+             * Render every PDF page.
+             */
 
             for (
                 let pageIndex = 1;
@@ -340,35 +462,100 @@
                 pageElement.appendChild(canvas);
 
 
-                flipbook.appendChild(pageElement);
-
+                /*
+                 * Render PDF page.
+                 */
 
                 await pdfPage.render({
+
                     canvasContext: context,
+
                     viewport: viewport
+
                 }).promise;
+
+
+                /*
+                 * Add companion link if
+                 * this page has one.
+                 */
+
+                if (
+                    companionLinks[pageIndex]
+                ) {
+
+                    const link =
+                        document.createElement("a");
+
+
+                    link.className =
+                        "companion-link";
+
+
+                    link.href =
+                        companionLinks[pageIndex].url;
+
+
+                    link.textContent =
+                        companionLinks[pageIndex].text;
+
+
+                    /*
+                     * Prevent clicking the link
+                     * from turning the page.
+                     */
+
+                    link.addEventListener(
+                        "click",
+                        function(event) {
+
+                            event.stopPropagation();
+
+                        }
+                    );
+
+
+                    pageElement.appendChild(link);
+
+                }
+
+
+                flipbook.appendChild(pageElement);
 
             }
 
 
-            loading.style.display = "none";
+            loading.style.display =
+                "none";
 
-            flipbook.style.display = "block";
 
+            flipbook.style.display =
+                "block";
+
+
+            /*
+             * Create flipbook.
+             */
 
             const pageFlip =
                 new St.PageFlip(
+
                     flipbook,
+
                     {
+
                         width: displayWidth,
+
                         height: displayHeight,
 
                         size: "stretch",
 
                         minWidth: 280,
+
                         maxWidth: displayWidth,
 
                         minHeight: 400,
+
                         maxHeight: displayHeight,
 
                         showCover: true,
@@ -380,7 +567,9 @@
                         drawShadow: true,
 
                         flippingTime: 700
+
                     }
+
                 );
 
 
@@ -389,10 +578,16 @@
             );
 
 
+            /*
+             * Update page number.
+             */
+
             function updatePageNumber() {
 
                 const current =
-                    pageFlip.getCurrentPageIndex() + 1;
+                    pageFlip
+                        .getCurrentPageIndex() + 1;
+
 
                 pageNumber.textContent =
                     `${current} / ${totalPages}`;
@@ -408,13 +603,21 @@
 
             previousButton.addEventListener(
                 "click",
-                () => pageFlip.flipPrev()
+                function() {
+
+                    pageFlip.flipPrev();
+
+                }
             );
 
 
             nextButton.addEventListener(
                 "click",
-                () => pageFlip.flipNext()
+                function() {
+
+                    pageFlip.flipNext();
+
+                }
             );
 
 
@@ -424,6 +627,7 @@
         } catch (error) {
 
             console.error(error);
+
 
             loading.textContent =
                 "Unable to load the issue. Please refresh the page.";
@@ -446,8 +650,11 @@
 
 
         return {
+
             width: viewport.width,
+
             height: viewport.height
+
         };
 
     }
