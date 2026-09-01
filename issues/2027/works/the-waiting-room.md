@@ -7,6 +7,8 @@ author: "Jane Doe"
 
 issue: "2027"
 
+permalink: /issues/2027/works/the-waiting-room/
+
 about_piece: |
   This piece explores the experience of waiting,
   uncertainty, and the strange moments of reflection
