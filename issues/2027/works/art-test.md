@@ -9,7 +9,7 @@ issue: "2027"
 
 permalink: /issues/2027/works/art-test/
 
-image: "/mcasom-the-tempest/issues/2027/works/art-test/light.jpg"
+image: "/mcasom-the-tempest/issues/2027/works/light.jpg"
 
 image_alt: "An abstract test artwork."
 
