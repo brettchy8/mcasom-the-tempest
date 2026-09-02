@@ -42,6 +42,8 @@ const { title, description = site.description, home = false, reader = false } = 
               <>
                 <a href={url('/issues/')}>Issues</a>
                 <span aria-hidden="true">•</span>
+                <a href={url('/authors/')}>Authors</a>
+                <span aria-hidden="true">•</span>
                 <a href={url('/about/')}>About</a>
               </>
             </nav>
@@ -55,14 +57,7 @@ const { title, description = site.description, home = false, reader = false } = 
         <footer class="site-footer">
           <div class="footer-reflection">
             <>
-              <p>
-                {site.tagline.split('\n').map((line) => (
-                  <Fragment>
-                    {line}
-                    <br />
-                  </Fragment>
-                ))}
-              </p>
+              <p>{site.tagline}</p>
               <div class="school-lockup">
                 <>
                   <img

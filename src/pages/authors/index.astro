@@ -1,0 +1,72 @@
+---
+import Site from '../../layouts/Site.astro';
+import Icon from '../../components/Icon.astro';
+import { authors, works, initials, url } from '../../lib/content';
+import '../../styles/authors.css';
+
+const alphabet = new Intl.Collator('en', { sensitivity: 'base', numeric: true });
+const list = [...authors].sort((a, b) => alphabet.compare(a.name.trim(), b.name.trim()));
+---
+
+<Site title="The authors">
+  <main id="main" class="site-main">
+    <div class="page-intro">
+      <span class="eyebrow accent">The contributors</span>
+      <h1>The authors.</h1>
+      <p>Meet the writers and artists of The Tempest.</p>
+    </div>
+    <section class="author-directory" aria-labelledby="authors-title">
+      <div class="section-heading">
+        <div>
+          <span class="eyebrow">Alphabetical by name</span>
+          <h2 id="authors-title">All authors</h2>
+        </div>
+        <span class="archive-count">{list.length} {list.length === 1 ? 'author' : 'authors'}</span>
+      </div>
+      {
+        list.some((author) => author.demo) && (
+          <p class="demo-notice">Design preview · Sample author profiles.</p>
+        )
+      }
+      {
+        list.length ? (
+          <ul class="author-directory-grid">
+            {list.map((author) => {
+              const contributions = works.filter((work) => work.author === author.slug).length;
+              return (
+                <li>
+                  <a class="author-directory-card" href={url(`/authors/${author.slug}/`)}>
+                    <div class="directory-portrait">
+                      {author.portrait ? (
+                        <img
+                          src={url(author.portrait)}
+                          alt=""
+                          loading="lazy"
+                          width="400"
+                          height="500"
+                        />
+                      ) : (
+                        <span aria-hidden="true">{initials(author.name)}</span>
+                      )}
+                    </div>
+                    <div class="directory-name">
+                      <h3>{author.name}</h3>
+                      <Icon name="arrow" />
+                    </div>
+                    <p class="eyebrow muted">
+                      {contributions
+                        ? `${contributions} ${contributions === 1 ? 'work' : 'works'}`
+                        : 'Author profile'}
+                    </p>
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p class="empty-note">Author profiles will appear here as they are published.</p>
+        )
+      }
+    </section>
+  </main>
+</Site>

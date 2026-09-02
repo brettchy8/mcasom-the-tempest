@@ -1,0 +1,67 @@
+.author-directory {
+  padding: 5.5rem 0 7rem;
+}
+.author-directory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem 2rem;
+  list-style: none;
+  margin: 2.2rem 0 0;
+  padding: 0;
+}
+.author-directory-card {
+  display: block;
+  text-decoration: none;
+}
+.directory-portrait {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--ink);
+  color: var(--paper);
+}
+.directory-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+}
+.directory-portrait > span {
+  font: 400 clamp(4rem, 8vw, 8rem) / 1 var(--serif);
+  letter-spacing: -0.04em;
+}
+.directory-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--line);
+  padding: 1rem 0;
+  transition: color 0.2s ease;
+}
+.directory-name h3 {
+  margin: 0;
+  font: 400 clamp(1.8rem, 3vw, 3rem) / 1 var(--serif);
+}
+.directory-name svg {
+  flex-shrink: 0;
+}
+.author-directory-card:is(:hover, :focus-visible) .directory-name {
+  color: var(--red);
+}
+@media (max-width: 720px) {
+  .author-directory {
+    padding: 4rem 0;
+  }
+  .author-directory-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem 1rem;
+  }
+  .directory-name {
+    gap: 0.5rem;
+  }
+  .directory-name h3 {
+    font-size: 1.7rem;
+  }
+}
