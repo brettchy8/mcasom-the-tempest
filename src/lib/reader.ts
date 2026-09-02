@@ -30,7 +30,7 @@ function setupReader(shell: HTMLElement) {
     pageCount = Number(shell.dataset.pages);
   let current = Math.min(
     pageCount,
-    Math.max(1, Number(new URL(location.href).searchParams.get('page')) || 1),
+    Math.max(1, Math.trunc(Number(new URL(location.href).searchParams.get('page'))) || 1),
   );
   let generation = 0,
     observer: IntersectionObserver | undefined;
@@ -305,11 +305,7 @@ function setupReader(shell: HTMLElement) {
     }),
   );
   document.addEventListener('keydown', (event) => {
-    if (
-      !pdf ||
-      zoom.open ||
-      /INPUT|SELECT|TEXTAREA|BUTTON/.test((event.target as HTMLElement).tagName)
-    )
+    if (!pdf || zoom.open || /INPUT|SELECT|TEXTAREA/.test((event.target as HTMLElement).tagName))
       return;
     if (event.key === 'ArrowRight' && !mobileQuery.matches) {
       event.preventDefault();
