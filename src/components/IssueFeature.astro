@@ -18,9 +18,7 @@ const selected = featured.length ? featured : allWorks.slice(0, 3);
 <section class="issue-feature" aria-label={`${issue.year} issue`}>
   <div class="issue-intro">
     <div class="issue-kicker">
-      <span class="eyebrow">{isHome ? 'The current issue' : 'The annual issue'}</span><span
-        class="issue-dot"
-        aria-hidden="true"></span>
+      <span class="eyebrow">{isHome ? 'The current issue' : 'The annual issue'}</span>
     </div><h1>{issue.year}</h1><div class="short-rule"></div><p class="issue-description">
       {issue.description}
     </p>
@@ -28,7 +26,8 @@ const selected = featured.length ? featured : allWorks.slice(0, 3);
       <a class="button button-primary" href={readerUrl(issue)}
         >Read the issue <Icon name="arrow" /></a
       ><a class="button button-outline" href={url(issue.pdf)} download={`${issue.year}.pdf`}
-        >Download PDF <Icon name="download" size={17} /></a>
+        >Download PDF <Icon name="download" size={17} /></a
+      >
     </div><p class="issue-meta eyebrow muted">{issue.pageCount} pages <i>·</i> {issue.fileSize}</p>
   </div>
   <figure class="hero-figure">
@@ -48,7 +47,8 @@ const selected = featured.length ? featured : allWorks.slice(0, 3);
   <aside class="featured-works">
     <div class="featured-heading">
       <h2>In this issue</h2><span
-        >{selected.length ? String(selected.length).padStart(2, '0') : issue.year}</span>
+        >{selected.length ? String(selected.length).padStart(2, '0') : issue.year}</span
+      >
     </div>
     {
       selected.length ? (

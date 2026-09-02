@@ -32,16 +32,11 @@ const { title, description = site.description, home = false, reader = false } = 
       !reader && (
         <header class:list={['masthead', { 'masthead-home': home }]}>
           <div class="masthead-top">
-            <>
-              <span>{site.school}</span>
-              <span>
-                Literature <i>·</i> Art <i>·</i> Medicine
-              </span>
-            </>
+            <span>{site.school}</span>
           </div>
           <div class="masthead-row">
             <a class="wordmark" href={url('/')} aria-label="The Tempest home">
-              THE TEMPEST
+              The Tempest
             </a>
             <nav aria-label="Main navigation">
               <>
@@ -70,7 +65,13 @@ const { title, description = site.description, home = false, reader = false } = 
               </p>
               <div class="school-lockup">
                 <>
-                  <span class="school-monogram">M</span>
+                  <img
+                    class="school-logo"
+                    src={url('/mayo-clinic-shields.svg')}
+                    alt="Mayo Clinic shields"
+                    width="367"
+                    height="277"
+                  />
                   <div>
                     <>
                       <strong>MCASOM</strong>
