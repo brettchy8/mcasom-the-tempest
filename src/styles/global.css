@@ -845,7 +845,7 @@ a {
     padding-top: 1.7rem;
   }
   .wordmark {
-    font-size: 21.4vw;
+    font-size: calc((100vw - 2rem) / 5.6);
     line-height: 0.57;
     letter-spacing: -0.075em;
   }
