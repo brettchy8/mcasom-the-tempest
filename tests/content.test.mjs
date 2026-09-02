@@ -4,6 +4,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { loadContent, referencedMedia, mediaPath, workSchema } from '../scripts/content.mjs';
+import { isPoetry, workExcerpt } from '../scripts/text.mjs';
 
 async function fixture(t, overrides = {}) {
   const root = await mkdtemp(path.join(tmpdir(), 'tempest-content-'));
@@ -54,7 +55,7 @@ async function fixture(t, overrides = {}) {
         author: 'secret-writer',
         category: 'Poetry',
         status: 'draft',
-        image: '/media/images/unpublished.jpg',
+        artworks: [{ image: '/media/images/unpublished.jpg', alt: 'Private artwork' }],
       },
       {
         slug: 'sample-poem',
@@ -64,7 +65,7 @@ async function fixture(t, overrides = {}) {
         category: 'Poetry',
         status: 'published',
         demo: true,
-        image: '/media/images/sample.jpg',
+        artworks: [{ image: '/media/images/sample.jpg', alt: 'Sample artwork' }],
       },
       {
         slug: 'next-issue',
@@ -73,7 +74,7 @@ async function fixture(t, overrides = {}) {
         author: 'writer',
         category: 'Prose',
         status: 'published',
-        image: '/media/images/future.jpg',
+        artworks: [{ image: '/media/images/future.jpg', alt: 'Future artwork' }],
       },
     ],
     ...overrides,
@@ -174,7 +175,6 @@ test('works preserve poetry spacing and support multiple artworks and recordings
     author: 'writer',
     category: 'Poetry',
     body,
-    format: 'poetry',
     artworks: [{ image: '/media/images/a.jpg', alt: 'Description' }],
     recordings: [
       { file: '/media/audio/a.mp3', title: 'First' },
@@ -182,6 +182,69 @@ test('works preserve poetry spacing and support multiple artworks and recordings
     ],
   });
   assert.equal(work.body, body);
+  assert.ok(isPoetry(work.category));
   assert.equal(work.recordings.length, 2);
   assert.equal(work.pdfPage, null);
+});
+
+test('previews derive from the written work and only current gallery assets are published', async (t) => {
+  const data = await loadContent(
+    await fixture(t, {
+      issues: [
+        {
+          year: '2026',
+          title: '2026',
+          status: 'published',
+          pdf: '/media/pdfs/2026.pdf',
+          heroImage: '/media/images/old-cover.jpg',
+        },
+      ],
+      works: [
+        {
+          slug: 'a-poem',
+          title: 'A poem',
+          issue: '2026',
+          author: 'writer',
+          category: 'Poetry',
+          status: 'published',
+          body: 'First line\n  indented line\n\nLast stanza',
+          excerpt: 'Old manual excerpt',
+          image: '/media/images/old-thumb.jpg',
+          format: 'prose',
+          artworks: [
+            { image: '/media/images/first.jpg', alt: 'First artwork' },
+            { image: '/media/images/second.jpg', alt: 'Second artwork' },
+          ],
+        },
+      ],
+    }),
+  );
+  assert.equal(data.works[0].excerpt, 'First line indented line Last stanza');
+  assert.equal(data.works[0].artworks[0].image, '/media/images/first.jpg');
+  assert.ok(isPoetry(data.works[0].category));
+  assert.deepEqual([...referencedMedia(data)].sort(), [
+    '/media/images/first.jpg',
+    '/media/images/second.jpg',
+    '/media/pdfs/2026.pdf',
+  ]);
+});
+
+test('prose excerpts omit markup and hidden content while retaining readable punctuation', () => {
+  const body =
+    '# A **quiet** room\n\n[Listen](https://example.com) &amp; breathe.<br>Again.\n\n<script>hidden()</script>\n\n![Artwork](photo.jpg)';
+  assert.equal(workExcerpt(body, 'Prose'), 'A quiet room Listen & breathe. Again.');
+  assert.equal(
+    workExcerpt('*A literal poem*\n  & a pause', 'Poetry'),
+    '*A literal poem* & a pause',
+  );
+  assert.equal(workExcerpt('', 'Visual art'), '');
+});
+
+test('long excerpts truncate at words with three dots and leave short text intact', () => {
+  assert.equal(
+    workExcerpt('First morning light falls across the table.', 'Prose', 24),
+    'First morning light...',
+  );
+  assert.equal(workExcerpt('A brief work.', 'Prose'), 'A brief work.');
+  assert.equal(workExcerpt('🌊'.repeat(30), 'Poetry', 12), '🌊'.repeat(9) + '...');
 });

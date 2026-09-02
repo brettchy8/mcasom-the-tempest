@@ -1,7 +1,16 @@
 ---
 import Site from '../../layouts/Site.astro';
 import Icon from '../../components/Icon.astro';
-import { works, authorFor, issueUrl, readerUrl, url, prose, initials } from '../../lib/content';
+import {
+  works,
+  authorFor,
+  issueUrl,
+  readerUrl,
+  url,
+  prose,
+  initials,
+  isPoetry,
+} from '../../lib/content';
 export function getStaticPaths() {
   return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
 }
@@ -45,7 +54,7 @@ const author = authorFor(work);
       <div class="work-body">
         {
           work.body &&
-            (work.format === 'poetry' ? (
+            (isPoetry(work.category) ? (
               <div class="poem">{work.body}</div>
             ) : (
               <div class="prose" set:html={prose(work.body)} />
@@ -103,7 +112,8 @@ const author = authorFor(work);
             )
           }<div>
             <span class="eyebrow">About the author</span><h2>{author.name}</h2><span
-              class="text-link">Meet the author <Icon name="arrow" size={16} /></span>
+              class="text-link">Meet the author <Icon name="arrow" size={16} /></span
+            >
           </div></a
         >
       </div>

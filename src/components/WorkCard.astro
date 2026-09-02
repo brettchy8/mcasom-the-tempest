@@ -3,10 +3,10 @@ import { authorFor, url, type Work } from '../lib/content';
 import Icon from './Icon.astro';
 interface Props {
   work: Work;
-  index?: number;
 }
-const { work, index = 0 } = Astro.props;
+const { work } = Astro.props;
 const author = authorFor(work);
+const artwork = work.artworks[0];
 ---
 
 <article class="work-card">
@@ -14,7 +14,7 @@ const author = authorFor(work);
     <div class="work-card-copy">
       <span class="eyebrow accent">{work.category}</span><h3>{work.title}</h3><p class="byline">
         by {author.name}
-      </p><p class="work-excerpt">{work.excerpt}</p>
+      </p>{work.excerpt && <p class="work-excerpt">{work.excerpt}</p>}
       {
         work.recordings.length > 0 && (
           <span class="audio-hint">
@@ -24,21 +24,10 @@ const author = authorFor(work);
       }
     </div>
     {
-      work.image ? (
-        <img class="work-thumb" src={url(work.image)} alt="" loading="lazy" />
+      artwork ? (
+        <img class="work-thumb" src={url(artwork.image)} alt="" loading="lazy" />
       ) : (
-        <div class="type-thumb" aria-hidden="true">
-          <>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <i>
-              A moment
-              <br />
-              between
-              <br />
-              the lines.
-            </i>
-          </>
-        </div>
+        <div class="gradient-thumb" aria-hidden="true" />
       )
     }
   </a>

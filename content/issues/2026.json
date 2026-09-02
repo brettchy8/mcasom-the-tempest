@@ -4,8 +4,7 @@
   "description": "Art, poetry, photography, prose, and the human experience.",
   "pdf": "/media/pdfs/2026.pdf",
   "status": "published",
-  "heroImage": "/media/images/2026-hero.jpg",
-  "heroCredit": "As the Storm Approaches \u00b7 Isaac Daybell",
+  "heroCredit": "As the Storm Approaches · Isaac Daybell",
   "featuredWorks": [
     "anatomy-of-quiet",
     "between-shifts",

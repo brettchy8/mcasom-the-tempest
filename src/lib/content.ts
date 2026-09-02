@@ -1,17 +1,19 @@
 import raw from '../generated/content.json';
 import { marked } from 'marked';
 import sanitizeHtml from 'sanitize-html';
+export { isPoetry } from '../../scripts/text.mjs';
 
 export interface Issue {
   year: string;
   title: string;
   description: string;
   pdf: string;
-  heroImage: string;
   heroCredit: string;
   featuredWorks: string[];
   sections: { title: string; page: number }[];
   cover: string;
+  coverWidth: number;
+  coverHeight: number;
   pageCount: number;
   pageRatio: number;
   fileSize: string;
@@ -27,8 +29,6 @@ export interface Work {
   order: number;
   excerpt: string;
   body: string;
-  format: string;
-  image: string;
   pdfPage: number | null;
   about: string;
   artworks: { image: string; alt: string; caption: string }[];

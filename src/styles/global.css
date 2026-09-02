@@ -209,21 +209,16 @@ a {
   position: relative;
   overflow: hidden;
   background: #ddd;
-  height: clamp(30rem, 39vw, 41rem);
 }
 .hero-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) contrast(1.08);
-  transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.hero-image.is-cover {
   object-fit: contain;
-  background: #d8d4cb;
+  filter: grayscale(1);
+  transition: filter 0.5s ease;
 }
-.hero-figure > a:hover .hero-image {
-  transform: scale(1.012);
+.hero-figure > a:is(:hover, :focus-visible) .hero-image {
+  filter: grayscale(0);
 }
 .hero-open {
   position: absolute;
@@ -311,7 +306,7 @@ a {
   max-width: 15rem;
 }
 .work-thumb,
-.type-thumb {
+.gradient-thumb {
   width: 8rem;
   height: 7.3rem;
   object-fit: cover;
@@ -322,18 +317,12 @@ a {
 .work-card-link:hover .work-thumb {
   filter: grayscale(0.2);
 }
-.type-thumb {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 0.6rem;
-  background: rgba(255, 255, 255, 0.25);
-}
-.type-thumb span {
-  font: 500 0.5rem/1 var(--sans);
-}
-.type-thumb i {
-  font: italic 0.9rem/1 var(--serif);
+.gradient-thumb {
+  filter: none;
+  background:
+    radial-gradient(ellipse at 18% 14%, rgba(246, 242, 233, 0.85), transparent 65%),
+    radial-gradient(ellipse at 85% 90%, rgba(96, 72, 78, 0.45), transparent 70%),
+    linear-gradient(145deg, #b8b3a7, #8b9295 55%, #c8b6a5);
 }
 .audio-hint {
   display: flex;
@@ -428,7 +417,6 @@ a {
   position: relative;
   background: #dad5cb;
   overflow: hidden;
-  aspect-ratio: 306/396;
 }
 .archive-cover img {
   width: 100%;
@@ -824,7 +812,7 @@ a {
     grid-template-columns: 1fr 6.5rem;
   }
   .work-thumb,
-  .type-thumb {
+  .gradient-thumb {
     width: 6.5rem;
     height: 6.5rem;
   }
@@ -880,10 +868,6 @@ a {
   .hero-figure {
     margin-top: 2.5rem;
   }
-  .hero-figure > a {
-    height: 115vw;
-    max-height: 42rem;
-  }
   .hero-open {
     opacity: 1;
     transform: none;
@@ -896,7 +880,7 @@ a {
     grid-template-columns: 1fr 7.2rem;
   }
   .work-thumb,
-  .type-thumb {
+  .gradient-thumb {
     width: 7.2rem;
     height: 7.2rem;
   }

@@ -56,6 +56,8 @@ for (const issue of data.issues) {
   issue.pageCount = meta.pages;
   issue.fileSize = `${(bytes.length / (1024 * 1024)).toFixed(1)} MB`;
   issue.pageRatio = meta.width / meta.height;
+  issue.coverWidth = Math.ceil(meta.width);
+  issue.coverHeight = Math.ceil(meta.height);
   await copyFile(`${cached}.jpg`, `public${issue.cover}`);
   for (const section of issue.sections)
     if (section.page > meta.pages)

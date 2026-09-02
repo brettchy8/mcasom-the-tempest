@@ -29,7 +29,7 @@ content:
     type: collection
     path: content/issues
     format: json
-    filename: '{fields.year}.json'
+    filename: "{fields.year}.json"
     view:
       primary: year
       fields:
@@ -72,17 +72,13 @@ content:
         label: Issue PDF
         type: file
         required: true
-        description: Upload single pages, named by year, such as 2026.pdf. Maximum 25 MiB.
+        description: Upload single pages, named by year, such as 2026.pdf. Maximum 25
+          MiB. The first page automatically becomes the cover image.
         options:
           media: pdfs
           extensions:
             - pdf
           rename: false
-      - name: heroImage
-        label: Homepage image (optional)
-        type: image
-        options:
-          media: images
       - name: heroCredit
         label: Image title and credit
         type: string
@@ -91,8 +87,8 @@ content:
         type: reference
         options:
           collection: works
-          value: '{fields.slug}'
-          label: '{fields.title}'
+          value: "{fields.slug}"
+          label: "{fields.title}"
           search: title
           multiple: true
       - name: sections
@@ -116,7 +112,7 @@ content:
     type: collection
     path: content/works
     format: json
-    filename: '{fields.slug}.json'
+    filename: "{fields.slug}.json"
     view:
       primary: title
       fields:
@@ -143,8 +139,8 @@ content:
         type: reference
         options:
           collection: issues
-          value: '{fields.year}'
-          label: '{fields.year}'
+          value: "{fields.year}"
+          label: "{fields.year}"
           search: year
           multiple: false
         required: true
@@ -153,8 +149,8 @@ content:
         type: reference
         options:
           collection: authors
-          value: '{fields.slug}'
-          label: '{fields.name}'
+          value: "{fields.slug}"
+          label: "{fields.name}"
           search: name
           multiple: false
         required: true
@@ -173,34 +169,18 @@ content:
         label: Reading order
         type: number
         default: 0
-      - name: excerpt
-        label: Short homepage excerpt
-        type: text
-      - name: image
-        label: Homepage thumbnail
-        type: image
-        options:
-          media: images
-      - name: format
-        label: Text format
-        type: select
-        default: prose
-        options:
-          values:
-            - name: poetry
-              label: Poetry — preserve line breaks
-            - name: prose
-              label: Prose — paragraphs
       - name: body
         label: The written work
         type: text
-        description: For poems, enter line breaks and blank lines exactly as they should
-          appear. For prose, separate paragraphs with a blank line; Markdown
-          emphasis is supported.
+        description: The opening text becomes the preview excerpt automatically. Choose
+          Poetry to preserve line breaks and indentation. For other categories,
+          separate paragraphs with a blank line; Markdown emphasis is supported.
       - name: artworks
         label: Artwork gallery
         type: object
         list: true
+        description: The first artwork is used in previews. Without artwork, a soft
+          gradient appears instead.
         fields:
           - name: image
             label: Artwork
@@ -253,7 +233,7 @@ content:
     type: collection
     path: content/authors
     format: json
-    filename: '{fields.slug}.json'
+    filename: "{fields.slug}.json"
     view:
       primary: name
       fields:
@@ -301,8 +281,8 @@ content:
         type: reference
         options:
           collection: issues
-          value: '{fields.year}'
-          label: '{fields.year}'
+          value: "{fields.year}"
+          label: "{fields.year}"
           search: year
           multiple: false
       - name: tagline

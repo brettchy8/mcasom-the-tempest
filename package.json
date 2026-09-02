@@ -19,6 +19,7 @@
     "@fontsource/manrope": "^5.2.8",
     "@napi-rs/canvas": "^1.0.8",
     "astro": "7.2.10",
+    "entities": "7.0.1",
     "marked": "^17.0.0",
     "page-flip": "2.0.7",
     "pdfjs-dist": "6.3.289",

@@ -51,10 +51,10 @@ const fieldsIssue = [
   f('description', 'Introduction', 'text'),
   f('pdf', 'Issue PDF', 'file', {
     required: true,
-    description: 'Upload single pages, named by year, such as 2026.pdf. Maximum 25 MiB.',
+    description:
+      'Upload single pages, named by year, such as 2026.pdf. Maximum 25 MiB. The first page automatically becomes the cover image.',
     options: { media: 'pdfs', extensions: ['pdf'], rename: false },
   }),
-  image('heroImage', 'Homepage image (optional)'),
   f('heroCredit', 'Image title and credit', 'string'),
   ref('featuredWorks', 'Featured works, in homepage order', 'works', 'slug', 'title', true),
   f('sections', 'Reader contents', 'object', {
@@ -86,23 +86,14 @@ const fieldsWork = [
     options: { values: ['Poetry', 'Prose', 'Photography', 'Visual art', 'Other'] },
   }),
   f('order', 'Reading order', 'number', { default: 0 }),
-  f('excerpt', 'Short homepage excerpt', 'text'),
-  image('image', 'Homepage thumbnail'),
-  f('format', 'Text format', 'select', {
-    default: 'prose',
-    options: {
-      values: [
-        { name: 'poetry', label: 'Poetry — preserve line breaks' },
-        { name: 'prose', label: 'Prose — paragraphs' },
-      ],
-    },
-  }),
   f('body', 'The written work', 'text', {
     description:
-      'For poems, enter line breaks and blank lines exactly as they should appear. For prose, separate paragraphs with a blank line; Markdown emphasis is supported.',
+      'The opening text becomes the preview excerpt automatically. Choose Poetry to preserve line breaks and indentation. For other categories, separate paragraphs with a blank line; Markdown emphasis is supported.',
   }),
   f('artworks', 'Artwork gallery', 'object', {
     list: true,
+    description:
+      'The first artwork is used in previews. Without artwork, a soft gradient appears instead.',
     fields: [
       image('image', 'Artwork'),
       f('alt', 'Image description', 'string', { required: true }),

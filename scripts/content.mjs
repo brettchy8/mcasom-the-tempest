@@ -1,6 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
 import { z } from 'zod';
+import { workExcerpt } from './text.mjs';
 
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const year = z.string().regex(/^\d{4}$/);
@@ -26,7 +27,6 @@ export const issueSchema = z.object({
   title: z.string().min(1),
   description: z.string().default(''),
   pdf: media.refine((v) => v.endsWith('.pdf')),
-  heroImage: media.default(''),
   heroCredit: z.string().default(''),
   featuredWorks: z.array(slug).default([]),
   sections: z
@@ -48,10 +48,7 @@ export const workSchema = z.object({
   issue: year,
   category: z.string().min(1),
   order: z.number().default(0),
-  excerpt: z.string().default(''),
   body: z.string().default(''),
-  format: z.enum(['poetry', 'prose']).default('prose'),
-  image: media.default(''),
   pdfPage: z.number().int().positive().nullable().default(null),
   about: z.string().default(''),
   artworks: z
@@ -132,7 +129,9 @@ export async function loadContent(root, preview = false) {
         publishedWorks.some((w) => w.slug === s && w.issue === i.year),
       ),
     })),
-    works: publishedWorks.sort((a, b) => a.order - b.order),
+    works: publishedWorks
+      .sort((a, b) => a.order - b.order)
+      .map((work) => ({ ...work, excerpt: workExcerpt(work.body, work.category) })),
     authors: publishedAuthors,
   };
 }
@@ -140,10 +139,9 @@ export async function loadContent(root, preview = false) {
 export function referencedMedia(data) {
   return new Set(
     [
-      ...data.issues.flatMap((i) => [i.pdf, i.heroImage]),
+      ...data.issues.map((i) => i.pdf),
       ...data.authors.map((a) => a.portrait),
       ...data.works.flatMap((w) => [
-        w.image,
         ...w.artworks.map((a) => a.image),
         ...w.recordings.map((a) => a.file),
       ]),

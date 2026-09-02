@@ -33,14 +33,15 @@ const list: Issue[] = issues.filter((i) => i.year !== exclude);
               class="archive-cover"
               href={issueUrl(issue)}
               aria-label={`Explore the ${issue.year} issue`}
+              style={`aspect-ratio: ${issue.pageRatio}`}
             >
               <span class="archive-index">{String(index + 1).padStart(2, '0')}</span>
               <img
                 src={url(issue.cover)}
                 alt={`The Tempest ${issue.year} cover`}
                 loading="lazy"
-                width="306"
-                height="396"
+                width={issue.coverWidth}
+                height={issue.coverHeight}
               />
             </a>
             <a class="archive-title" href={issueUrl(issue)}>

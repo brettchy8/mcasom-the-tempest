@@ -30,7 +30,7 @@ const list = works.filter((w) => w.author === author.slug);
       </div>
     </section><section class="author-works">
       <div class="section-heading"><h2>Selected contributions</h2></div><div class="work-grid">
-        {list.map((work, index) => <WorkCard work={work} index={index} />)}
+        {list.map((work) => <WorkCard work={work} />)}
       </div>
     </section>
   </main></Site

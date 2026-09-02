@@ -20,8 +20,8 @@ const list = worksFor(issue);
       </div>{
         list.length ? (
           <div class="work-grid">
-            {list.map((work, index) => (
-              <WorkCard work={work} index={index} />
+            {list.map((work) => (
+              <WorkCard work={work} />
             ))}
           </div>
         ) : (

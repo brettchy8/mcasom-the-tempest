@@ -37,14 +37,14 @@ CONTENT_DIR=/absolute/path/to/tempest-editorial/content npm run dev
 
 ## Content model
 
-| Record | Fields                                                                                                                                                       |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Issue  | Year, title, introduction, PDF, optional hero and credit, ordered featured works, PDF contents links                                                         |
-| Work   | Title, permanent slug, one author, one issue, category, reading order, excerpt, text, optional thumbnail, artwork gallery, MP3 recordings, optional PDF page |
-| Author | Name, permanent slug, biography, optional portrait                                                                                                           |
-| Site   | Publication name, school, current issue, description, About copy, footer statement                                                                           |
+| Record | Fields                                                                                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| Issue  | Year, title, introduction, PDF, cover title and credit, ordered featured works, PDF contents links                              |
+| Work   | Title, permanent slug, one author, one issue, category, reading order, text, artwork gallery, MP3 recordings, optional PDF page |
+| Author | Name, permanent slug, biography, optional portrait                                                                              |
+| Site   | Publication name, school, current issue, description, About copy, footer statement                                              |
 
-Every issue, work, and author has Draft/Ready status and a sample flag. Sample content is always excluded from production. A ready work requires a ready author and a published issue. Poetry preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
+Every issue, work, and author has Draft/Ready status and a sample flag. Sample content is always excluded from production. A ready work requires a ready author and a published issue. The first PDF page supplies the cover and its proportions. Work excerpts are generated from the opening text, up to 120 characters with `...` for longer text. The first gallery image supplies the thumbnail; works without artwork use a gradient. The Poetry category preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
 
 ## Hosting
 
