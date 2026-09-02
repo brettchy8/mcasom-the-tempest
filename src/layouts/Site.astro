@@ -1,0 +1,103 @@
+---
+import '@fontsource/cormorant-garamond/latin-400.css';
+import '@fontsource/cormorant-garamond/latin-400-italic.css';
+import '@fontsource/cormorant-garamond/latin-500.css';
+import '@fontsource/manrope/latin-400.css';
+import '@fontsource/manrope/latin-500.css';
+import '../styles/global.css';
+import { site, url, preview } from '../lib/content';
+interface Props {
+  title?: string;
+  description?: string;
+  home?: boolean;
+  reader?: boolean;
+}
+const { title, description = site.description, home = false, reader = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={reader ? '#191a19' : '#f4f0e6'} />
+    {preview && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <title>{title ? `${title} · The Tempest` : 'The Tempest · Art & the human experience'}</title>
+  </head>
+  <body class:list={[reader ? 'reader-body' : 'paper', { 'home-page': home }]}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    {
+      !reader && (
+        <header class:list={['masthead', { 'masthead-home': home }]}>
+          <div class="masthead-top">
+            <>
+              <span>{site.school}</span>
+              <span>
+                Literature <i>·</i> Art <i>·</i> Medicine
+              </span>
+            </>
+          </div>
+          <div class="masthead-row">
+            <a class="wordmark" href={url('/')} aria-label="The Tempest home">
+              THE TEMPEST
+            </a>
+            <nav aria-label="Main navigation">
+              <>
+                <a href={url('/issues/')}>Issues</a>
+                <span aria-hidden="true">•</span>
+                <a href={url('/about/')}>About</a>
+              </>
+            </nav>
+          </div>
+        </header>
+      )
+    }
+    <slot />
+    {
+      !reader && (
+        <footer class="site-footer">
+          <div class="footer-reflection">
+            <>
+              <p>
+                {site.tagline.split('\n').map((line) => (
+                  <Fragment>
+                    {line}
+                    <br />
+                  </Fragment>
+                ))}
+              </p>
+              <div class="school-lockup">
+                <>
+                  <span class="school-monogram">M</span>
+                  <div>
+                    <>
+                      <strong>MCASOM</strong>
+                      <span>
+                        Mayo Clinic Alix
+                        <br />
+                        School of Medicine
+                      </span>
+                    </>
+                  </div>
+                </>
+              </div>
+            </>
+          </div>
+          <div class="footer-bottom">
+            <>
+              <span>
+                The Tempest <i>·</i> A student-run publication
+              </span>
+              <a href={url('/admin/')}>
+                Editorial desk <span aria-hidden="true">↗</span>
+              </a>
+              <span>Made for a moment of pause.</span>
+            </>
+          </div>
+        </footer>
+      )
+    }
+  </body>
+</html>

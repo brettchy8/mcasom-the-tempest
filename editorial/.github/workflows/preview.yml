@@ -1,0 +1,53 @@
+name: Preview website privately
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS action context
+        required: false
+        default: '{}'
+        type: string
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: editorial
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.SOURCE_REPO }}
+          ref: ${{ vars.SOURCE_REF }}
+          path: site
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - name: Build private preview
+        run: npm run build:preview
+        working-directory: site
+        env:
+          CONTENT_DIR: ${{ github.workspace }}/editorial/content
+      - uses: actions/upload-artifact@v4
+        with:
+          name: private-preview
+          path: site/dist
+          retention-days: 7
+          include-hidden-files: true
+      - name: Explain preview access
+        run: |
+          cat >> "$GITHUB_STEP_SUMMARY" <<'NOTE'
+          ## Private preview built
+          Download **private-preview** from this run. It contains drafts and sample content, so it is accessible only to this private repository's collaborators.
+
+          A maintainer can serve the downloaded folder locally. GitHub Pages cannot provide a private browser preview on this setup. Protected browser previews can be added with Cloudflare Access later.
+
+          **Nothing was published.** Use **Publish website** after approving the ready content.
+          NOTE

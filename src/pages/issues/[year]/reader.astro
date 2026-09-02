@@ -1,0 +1,146 @@
+---
+import Site from '../../../layouts/Site.astro';
+import Icon from '../../../components/Icon.astro';
+import { issues, worksFor, issueUrl, url } from '../../../lib/content';
+import '../../../styles/reader.css';
+export function getStaticPaths() {
+  return issues.map((issue) => ({ params: { year: issue.year }, props: { issue } }));
+}
+const { issue } = Astro.props;
+const linkedWorks = worksFor(issue).filter((w) => w.pdfPage);
+const categories = [...new Set(linkedWorks.map((w) => w.category))];
+---
+
+<Site title={`${issue.year} reader`} reader>
+  <header class="reader-header">
+    <a class="reader-wordmark" href={url('/')}>THE TEMPEST</a><span>{issue.year} issue</span><a
+      href={issueUrl(issue)}
+      class="exit-reader">Exit reader <Icon name="close" size={14} /></a
+    >
+  </header>
+  <main
+    id="main"
+    class="reader-shell"
+    data-reader
+    data-pdf={url(issue.pdf)}
+    data-pages={issue.pageCount}
+    data-ratio={issue.pageRatio}
+    data-assets={url('/pdf-assets/')}
+    data-year={issue.year}
+  >
+    <aside class="reader-contents" id="reader-contents" aria-label="Issue contents">
+      <div class="contents-heading">
+        <Icon name="menu" size={18} /><h1>Contents</h1><button
+          class="contents-close"
+          aria-label="Close contents"><Icon name="close" size={16} /></button
+        >
+      </div><nav>
+        <button class="contents-link" data-page="1">Cover <span>01</span></button>
+        {
+          issue.sections.map((s) => (
+            <button class="contents-link" data-page={s.page}>
+              {s.title}
+              <span>{String(s.page).padStart(2, '0')}</span>
+            </button>
+          ))
+        }
+        {
+          categories.map((category) => (
+            <div class="contents-category">
+              <h2>{category}</h2>
+              {linkedWorks
+                .filter((w) => w.category === category)
+                .map((w) => (
+                  <div>
+                    <button class="contents-work" data-page={w.pdfPage}>
+                      {w.title}
+                      <span>{w.pdfPage}</span>
+                    </button>
+                    <a class="companion-link" href={url(`/works/${w.slug}/`)}>
+                      View companion ↗
+                    </a>
+                  </div>
+                ))}
+            </div>
+          ))
+        }
+      </nav><div class="contents-foot">
+        <span class="eyebrow">The annual collection</span><p>
+          Art & the<br /><em>human experience.</em>
+        </p><span class="eyebrow">{issue.pageCount} pages</span>
+      </div>
+    </aside>
+    <section class="reader-stage" aria-label="PDF reader">
+      <div class="reader-loading" id="reader-loading" role="status">
+        <div class="loader-mark">T</div><p>Opening the {issue.year} issue</p><span
+          id="loading-detail">Preparing the pages…</span
+        >
+      </div><div class="reader-error" id="reader-error" hidden role="alert">
+        <h2>The reader couldn’t open this issue.</h2><p>
+          Try again, or open the original PDF.
+        </p><button id="reader-retry">Try again</button><a href={url(issue.pdf)}>Open PDF ↗</a>
+      </div>
+      <div class="desktop-reader" id="desktop-reader" hidden>
+        <button class="page-arrow previous-page" aria-label="Previous pages" disabled
+          ><Icon name="left" size={30} /></button
+        ><div class="book-frame" id="book-frame"><div id="flip-book"></div></div><button
+          class="page-arrow next-page"
+          aria-label="Next pages"
+          disabled><Icon name="right" size={30} /></button
+        >
+      </div>
+      <div class="mobile-pages" id="mobile-pages" hidden></div><div
+        class="reader-page-status"
+        id="page-status"
+        aria-live="polite"
+      >
+        1 / {issue.pageCount}
+      </div>
+    </section>
+    <div class="reader-progress">
+      <label for="page-range" class="sr-only">Go to PDF page</label><input
+        id="page-range"
+        type="range"
+        min="1"
+        max={issue.pageCount}
+        value="1"
+        disabled
+      /><div class="progress-labels">
+        <span>1</span><span>{Math.round(issue.pageCount / 4)}</span><span
+          >{Math.round(issue.pageCount / 2)}</span
+        ><span>{Math.round(issue.pageCount * 0.75)}</span><span>{issue.pageCount}</span>
+      </div>
+    </div>
+    <footer class="reader-toolbar">
+      <button class="contents-toggle" aria-controls="reader-contents" aria-expanded="false"
+        ><Icon name="menu" size={18} /> Contents</button
+      ><span class="keyboard-hint"><Icon name="keyboard" size={20} /> Press ← → to turn pages</span
+      ><div class="toolbar-actions">
+        <button id="zoom-open" disabled><Icon name="zoom" size={19} /> Zoom</button><button
+          id="fullscreen"><Icon name="fullscreen" size={19} /><span>Fullscreen</span></button
+        ><a href={url(issue.pdf)} download={`${issue.year}.pdf`} aria-label="Download PDF"
+          ><Icon name="download" size={19} /><span>Download PDF</span></a
+        >
+      </div>
+    </footer>
+  </main>
+  <dialog id="zoom-dialog" class="zoom-dialog">
+    <div class="zoom-toolbar">
+      <label>Page <select id="zoom-page" aria-label="Page to zoom"></select></label><label
+        >Magnification <select id="zoom-level"
+          ><option value="1">100%</option><option value="1.5">150%</option><option value="2"
+            >200%</option
+          ></select
+        ></label
+      ><button id="zoom-close" aria-label="Close zoom"><Icon name="close" /></button>
+    </div><div class="zoom-scroll"><div id="zoom-container"></div></div>
+  </dialog>
+  <noscript
+    ><p class="no-script">
+      The interactive reader needs JavaScript. <a href={url(issue.pdf)}>Open the original PDF</a>.
+    </p></noscript
+  >
+  <script>
+    import '../../../lib/reader';
+  </script>
+</Site>

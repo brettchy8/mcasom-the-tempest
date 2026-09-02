@@ -1,0 +1,58 @@
+---
+import { issues, issueUrl, url, type Issue } from '../lib/content';
+import Icon from './Icon.astro';
+interface Props {
+  exclude?: string;
+  heading?: string;
+}
+const { exclude, heading = 'From the archive' } = Astro.props;
+const list: Issue[] = issues.filter((i) => i.year !== exclude);
+---
+
+{
+  list.length > 0 && (
+    <section class="archive" aria-labelledby="archive-title">
+      <div class="section-heading">
+        <>
+          <div>
+            <>
+              <span class="eyebrow">A collection, year by year</span>
+              <h2 id="archive-title">{heading}</h2>
+            </>
+          </div>
+          <span class="archive-count">
+            {list.length} {list.length === 1 ? 'issue' : 'issues'}
+            <span aria-hidden="true"> ↙</span>
+          </span>
+        </>
+      </div>
+      <div class="archive-grid">
+        {list.map((issue, index) => (
+          <article class="archive-card">
+            <a
+              class="archive-cover"
+              href={issueUrl(issue)}
+              aria-label={`Explore the ${issue.year} issue`}
+            >
+              <span class="archive-index">{String(index + 1).padStart(2, '0')}</span>
+              <img
+                src={url(issue.cover)}
+                alt={`The Tempest ${issue.year} cover`}
+                loading="lazy"
+                width="306"
+                height="396"
+              />
+            </a>
+            <a class="archive-title" href={issueUrl(issue)}>
+              <h3>{issue.year}</h3>
+              <Icon name="arrow" />
+            </a>
+            <p class="eyebrow muted">
+              {issue.pageCount} pages <i>·</i> Annual issue
+            </p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )
+}

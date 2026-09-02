@@ -1,0 +1,14 @@
+---
+import Site from '../layouts/Site.astro';
+import IssueFeature from '../components/IssueFeature.astro';
+import Archive from '../components/Archive.astro';
+import { currentIssue } from '../lib/content';
+---
+
+<Site home
+  ><main id="main" class="site-main">
+    <IssueFeature issue={currentIssue} isHome /><div class="editorial-divider">
+      <span>Art & the human experience</span>
+    </div><Archive exclude={currentIssue.year} />
+  </main></Site
+>

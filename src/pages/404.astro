@@ -1,0 +1,16 @@
+---
+import Site from '../layouts/Site.astro';
+import { url } from '../lib/content';
+---
+
+<Site title="Page not found"
+  ><main id="main" class="site-main">
+    <div class="page-intro">
+      <span class="eyebrow accent">404 · A missing page</span><h1>
+        Let’s turn<br /><em>another page.</em>
+      </h1><p>The page you’re looking for isn’t here.</p><a
+        class="button button-outline"
+        href={url('/issues/')}>Explore the issues →</a>
+    </div>
+  </main></Site
+>

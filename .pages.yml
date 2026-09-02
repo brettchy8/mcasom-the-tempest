@@ -1,0 +1,11 @@
+content:
+  - name: readme
+    label: Editorial workspace instructions
+    type: file
+    path: docs/editorial-workspace.md
+    format: raw
+    fields:
+      - name: body
+        label: Instructions
+        type: text
+        readonly: true

@@ -1,0 +1,45 @@
+---
+import { authorFor, url, type Work } from '../lib/content';
+import Icon from './Icon.astro';
+interface Props {
+  work: Work;
+  index?: number;
+}
+const { work, index = 0 } = Astro.props;
+const author = authorFor(work);
+---
+
+<article class="work-card">
+  <a class="work-card-link" href={url(`/works/${work.slug}/`)}>
+    <div class="work-card-copy">
+      <span class="eyebrow accent">{work.category}</span><h3>{work.title}</h3><p class="byline">
+        by {author.name}
+      </p><p class="work-excerpt">{work.excerpt}</p>
+      {
+        work.recordings.length > 0 && (
+          <span class="audio-hint">
+            <Icon name="headphones" size={13} /> With audio
+          </span>
+        )
+      }
+    </div>
+    {
+      work.image ? (
+        <img class="work-thumb" src={url(work.image)} alt="" loading="lazy" />
+      ) : (
+        <div class="type-thumb" aria-hidden="true">
+          <>
+            <span>{String(index + 1).padStart(2, '0')}</span>
+            <i>
+              A moment
+              <br />
+              between
+              <br />
+              the lines.
+            </i>
+          </>
+        </div>
+      )
+    }
+  </a>
+</article>

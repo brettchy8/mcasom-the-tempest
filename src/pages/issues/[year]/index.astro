@@ -1,0 +1,36 @@
+---
+import Site from '../../../layouts/Site.astro';
+import IssueFeature from '../../../components/IssueFeature.astro';
+import WorkCard from '../../../components/WorkCard.astro';
+import { issues, worksFor, readerUrl, url } from '../../../lib/content';
+export function getStaticPaths() {
+  return issues.map((issue) => ({ params: { year: issue.year }, props: { issue } }));
+}
+const { issue } = Astro.props;
+const list = worksFor(issue);
+---
+
+<Site title={`${issue.year} issue`}
+  ><main id="main" class="site-main">
+    <a class="breadcrumb" href={url('/issues/')}>← All issues</a><IssueFeature
+      issue={issue}
+    /><section id="works" class="issue-works">
+      <div class="section-heading">
+        <div><span class="eyebrow">Beyond the printed page</span><h2>Companion works</h2></div>
+      </div>{
+        list.length ? (
+          <div class="work-grid">
+            {list.map((work, index) => (
+              <WorkCard work={work} index={index} />
+            ))}
+          </div>
+        ) : (
+          <p class="empty-note">
+            The complete collection is available in the <a href={readerUrl(issue)}>issue reader</a>.
+            Companion works will appear here when added.
+          </p>
+        )
+      }
+    </section>
+  </main></Site
+>

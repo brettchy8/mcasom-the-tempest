@@ -1,0 +1,32 @@
+---
+import { url, issues } from '../lib/content';
+export function getStaticPaths() {
+  const target = issues.some((i) => i.year === '2026') ? '/issues/2026/' : '/issues/';
+  const paths = [
+    'issues/2027',
+    'issues/2027/works/example',
+    'issues/2027/works/another-work.html',
+    'issues/2027/works/art-test.html',
+    'issues/2027/works/poem-test.html',
+    'issues/2027/works/the-waiting-room.html',
+  ];
+  return [
+    {
+      params: { legacy: 'issues/2026/flipbook' },
+      props: { target: target === '/issues/2026/' ? `${target}reader/` : target },
+    },
+    ...paths.map((legacy) => ({ params: { legacy }, props: { target } })),
+  ];
+}
+const destination = url(Astro.props.target);
+---
+
+<!doctype html>
+<html lang="en">
+  <head
+    ><meta charset="utf-8" /><meta http-equiv="refresh" content={`0;url=${destination}`} /><meta
+      name="robots"
+      content="noindex"
+    /><title>The Tempest · Page moved</title></head
+  ><body><p>This page has moved. <a href={destination}>Continue to The Tempest.</a></p></body>
+</html>

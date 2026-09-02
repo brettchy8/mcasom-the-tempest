@@ -1,0 +1,37 @@
+---
+import Site from '../../layouts/Site.astro';
+import WorkCard from '../../components/WorkCard.astro';
+import { authors, works, prose, initials, url } from '../../lib/content';
+export function getStaticPaths() {
+  return authors.map((author) => ({ params: { slug: author.slug }, props: { author } }));
+}
+const { author } = Astro.props;
+const list = works.filter((w) => w.author === author.slug);
+---
+
+<Site title={author.name}
+  ><main id="main" class="site-main author-page">
+    <a class="breadcrumb" href={url('/issues/')}>← Explore the issues</a>{
+      author.demo && <p class="demo-notice">Design preview · Sample author profile.</p>
+    }<section class="author-profile">
+      <div class="author-portrait">
+        {
+          author.portrait ? (
+            <img src={url(author.portrait)} alt={author.name} />
+          ) : (
+            <span>{initials(author.name)}</span>
+          )
+        }
+      </div><div>
+        <span class="eyebrow accent">A voice in The Tempest</span><h1>{author.name}</h1><div
+          class="prose"
+          set:html={prose(author.bio)}
+        />
+      </div>
+    </section><section class="author-works">
+      <div class="section-heading"><h2>Selected contributions</h2></div><div class="work-grid">
+        {list.map((work, index) => <WorkCard work={work} index={index} />)}
+      </div>
+    </section>
+  </main></Site
+>

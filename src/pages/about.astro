@@ -1,0 +1,26 @@
+---
+import Site from '../layouts/Site.astro';
+import { site, prose, currentIssue, readerUrl, url } from '../lib/content';
+import Icon from '../components/Icon.astro';
+---
+
+<Site title="About"
+  ><main id="main" class="site-main about-page">
+    <div class="page-intro">
+      <span class="eyebrow accent">About the publication</span><h1>
+        Medicine is human.<br /><em>So are its stories.</em>
+      </h1>
+    </div><section class="about-layout">
+      <figure>
+        <img
+          src={url(currentIssue.heroImage || currentIssue.cover)}
+          alt={currentIssue.heroCredit || 'The current issue cover'}
+        /><figcaption>{currentIssue.heroCredit}</figcaption>
+      </figure><div>
+        <div class="prose" set:html={prose(site.about)} /><p class="eyebrow">{site.school}</p><a
+          class="button button-outline"
+          href={readerUrl(currentIssue)}>Read the latest issue <Icon name="arrow" /></a>
+      </div>
+    </section>
+  </main></Site
+>

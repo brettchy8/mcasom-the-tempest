@@ -1,0 +1,32 @@
+name: Check Astro redesign
+on:
+  push:
+    branches: [main, 'codex/**']
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          BASE_PATH: /mcasom-the-tempest
+      - run: npm run check
+      - name: Check production excludes sample content
+        run: |
+          test ! -d dist/works/anatomy-of-quiet
+          test ! -f dist/media/audio/sample-reading.mp3
+          test -f dist/media/pdfs/2026.pdf
+      - run: npm run build:preview
+      - run: npm run check

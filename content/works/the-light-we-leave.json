@@ -1,0 +1,24 @@
+{
+  "slug": "the-light-we-leave",
+  "title": "The light we leave",
+  "author": "riley-chen",
+  "category": "Visual art",
+  "excerpt": "A study in stillness, made from the things we almost overlook.",
+  "body": "A space for the artist\u2019s note: the idea behind a work, the process of making it, or the moment that inspired it.",
+  "format": "prose",
+  "image": "/media/images/sample-light.jpg",
+  "artworks": [
+    {
+      "image": "/media/images/sample-light.jpg",
+      "alt": "Sample artwork from the original repository",
+      "caption": "Placeholder artwork from the original repository. Artist attribution to be supplied."
+    }
+  ],
+  "recordings": [],
+  "issue": "2026",
+  "order": 3,
+  "status": "published",
+  "demo": true,
+  "pdfPage": null,
+  "about": "This is a demonstration companion page, not a contribution from the printed issue."
+}

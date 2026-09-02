@@ -1,0 +1,333 @@
+media:
+  - name: pdfs
+    label: Issue PDFs
+    input: content/media/pdfs
+    output: /media/pdfs
+    extensions:
+      - pdf
+    rename: false
+  - name: images
+    label: Artwork & portraits
+    input: content/media/images
+    output: /media/images
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+    rename: safe
+  - name: audio
+    label: Audio recordings
+    input: content/media/audio
+    output: /media/audio
+    extensions:
+      - mp3
+    rename: safe
+content:
+  - name: issues
+    label: Issues
+    type: collection
+    path: content/issues
+    format: json
+    filename: '{fields.year}.json'
+    view:
+      primary: year
+      fields:
+        - year
+        - status
+      sort: year
+    fields:
+      - name: year
+        label: Year
+        type: string
+        required: true
+        pattern: ^\d{4}$
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - &a1
+        name: status
+        label: Publication status
+        type: select
+        description: Draft stays private. Ready content goes live only when you click
+          Publish website.
+        default: draft
+        options:
+          values:
+            - name: draft
+              label: Draft
+            - name: published
+              label: Ready to publish
+      - &a2
+        name: demo
+        label: Sample content
+        type: boolean
+        default: false
+        description: Sample content appears in previews only, even when marked ready.
+      - name: description
+        label: Introduction
+        type: text
+      - name: pdf
+        label: Issue PDF
+        type: file
+        required: true
+        description: Upload single pages, named by year, such as 2026.pdf. Maximum 25 MiB.
+        options:
+          media: pdfs
+          extensions:
+            - pdf
+          rename: false
+      - name: heroImage
+        label: Homepage image (optional)
+        type: image
+        options:
+          media: images
+      - name: heroCredit
+        label: Image title and credit
+        type: string
+      - name: featuredWorks
+        label: Featured works, in homepage order
+        type: reference
+        options:
+          collection: works
+          value: '{fields.slug}'
+          label: '{fields.title}'
+          search: title
+          multiple: true
+      - name: sections
+        label: Reader contents
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Section title
+            type: string
+          - name: page
+            label: PDF page number
+            type: number
+            options:
+              min: 1
+        description: Use the PDF page number, counting the cover as page 1.
+    operations:
+      rename: false
+  - name: works
+    label: Works
+    type: collection
+    path: content/works
+    format: json
+    filename: '{fields.slug}.json'
+    view:
+      primary: title
+      fields:
+        - title
+        - status
+      sort: title
+    fields:
+      - &a3
+        name: slug
+        label: Web address
+        type: string
+        required: true
+        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
+        description: A short permanent address, such as anatomy-of-quiet. Use lowercase
+          letters and hyphens.
+      - name: title
+        label: Title
+        type: string
+        required: true
+      - *a1
+      - *a2
+      - name: issue
+        label: Issue
+        type: reference
+        options:
+          collection: issues
+          value: '{fields.year}'
+          label: '{fields.year}'
+          search: year
+          multiple: false
+        required: true
+      - name: author
+        label: Author
+        type: reference
+        options:
+          collection: authors
+          value: '{fields.slug}'
+          label: '{fields.name}'
+          search: name
+          multiple: false
+        required: true
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          values:
+            - Poetry
+            - Prose
+            - Photography
+            - Visual art
+            - Other
+      - name: order
+        label: Reading order
+        type: number
+        default: 0
+      - name: excerpt
+        label: Short homepage excerpt
+        type: text
+      - name: image
+        label: Homepage thumbnail
+        type: image
+        options:
+          media: images
+      - name: format
+        label: Text format
+        type: select
+        default: prose
+        options:
+          values:
+            - name: poetry
+              label: Poetry — preserve line breaks
+            - name: prose
+              label: Prose — paragraphs
+      - name: body
+        label: The written work
+        type: text
+        description: For poems, enter line breaks and blank lines exactly as they should
+          appear. For prose, separate paragraphs with a blank line; Markdown
+          emphasis is supported.
+      - name: artworks
+        label: Artwork gallery
+        type: object
+        list: true
+        fields:
+          - name: image
+            label: Artwork
+            type: image
+            options:
+              media: images
+          - name: alt
+            label: Image description
+            type: string
+            required: true
+          - name: caption
+            label: Caption and credit
+            type: text
+      - name: recordings
+        label: Audio recordings
+        type: object
+        list: true
+        fields:
+          - name: title
+            label: Recording title
+            type: string
+            required: true
+          - name: file
+            label: MP3 file
+            type: file
+            required: true
+            options:
+              media: audio
+              extensions:
+                - mp3
+          - name: description
+            label: Recording description or credit
+            type: text
+      - name: pdfPage
+        label: Starting PDF page (optional)
+        type: number
+        options:
+          min: 1
+        description: Count the cover as page 1. Leave empty for web-only companion works.
+      - name: about
+        label: About the work
+        type: rich-text
+        options:
+          format: markdown
+          media: false
+    operations:
+      rename: false
+  - name: authors
+    label: Authors
+    type: collection
+    path: content/authors
+    format: json
+    filename: '{fields.slug}.json'
+    view:
+      primary: name
+      fields:
+        - name
+        - status
+      sort: name
+    fields:
+      - *a3
+      - name: name
+        label: Name
+        type: string
+        required: true
+      - *a1
+      - *a2
+      - name: portrait
+        label: Portrait
+        type: image
+        options:
+          media: images
+      - name: bio
+        label: About the author
+        type: rich-text
+        options:
+          format: markdown
+          media: false
+    operations:
+      rename: false
+  - name: site
+    label: Site settings & About
+    type: file
+    path: content/site.json
+    format: json
+    fields:
+      - name: title
+        label: Publication name
+        type: string
+      - name: school
+        label: School name
+        type: string
+      - name: description
+        label: Site description
+        type: text
+      - name: currentIssue
+        label: Current issue
+        type: reference
+        options:
+          collection: issues
+          value: '{fields.year}'
+          label: '{fields.year}'
+          search: year
+          multiple: false
+      - name: tagline
+        label: Footer statement
+        type: text
+      - name: about
+        label: About the publication
+        type: rich-text
+        options:
+          format: markdown
+          media: false
+      - name: editorialRepo
+        label: Editorial repository
+        type: string
+        hidden: true
+actions:
+  - name: preview
+    label: Preview website
+    workflow: preview.yml
+    confirm: false
+  - name: publish
+    label: Publish website
+    workflow: publish.yml
+    confirm:
+      title: Publish the approved website?
+      message: This publishes all content marked Ready to publish. Drafts and sample
+        content stay private.
+      button: Publish website

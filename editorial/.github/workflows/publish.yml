@@ -1,0 +1,75 @@
+name: Publish website
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS action context
+        required: false
+        default: '{}'
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: publish-website
+  cancel-in-progress: false
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: editorial
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.SOURCE_REPO }}
+          ref: ${{ vars.SOURCE_REF }}
+          path: site
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+        working-directory: site
+      - run: npm test
+        working-directory: site
+      - name: Build published content only
+        run: npm run build
+        working-directory: site
+        env:
+          CONTENT_DIR: ${{ github.workspace }}/editorial/content
+          SITE_URL: ${{ vars.SITE_URL }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
+      - run: npm run check
+        working-directory: site
+      - name: Publish the static files to GitHub Pages
+        env:
+          PAGES_DEPLOY_KEY: ${{ secrets.PAGES_DEPLOY_KEY }}
+          PUBLIC_SITE_REPO: ${{ vars.PUBLIC_SITE_REPO }}
+          SITE_URL: ${{ vars.SITE_URL }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
+        run: |
+          set -eu
+          test -n "$PAGES_DEPLOY_KEY"
+          test -n "$PUBLIC_SITE_REPO"
+          keyfile="$RUNNER_TEMP/tempest-pages-key"
+          trap 'rm -f "$keyfile"' EXIT
+          printf '%s\n' "$PAGES_DEPLOY_KEY" > "$keyfile"
+          chmod 600 "$keyfile"
+          mkdir -p "$HOME/.ssh"
+          curl --fail --silent --show-error https://api.github.com/meta | jq -r '.ssh_keys[] | "github.com " + .' >> "$HOME/.ssh/known_hosts"
+          export GIT_SSH_COMMAND="ssh -i $keyfile -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+          git clone --single-branch --branch gh-pages "git@github.com:${PUBLIC_SITE_REPO}.git" published
+          rsync -a --delete --exclude=.git site/dist/ published/
+          cd published
+          git config user.name 'Tempest publishing'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          if ! git diff --cached --quiet; then
+            git commit -m 'Publish approved editorial content'
+            git push origin gh-pages
+          fi
+          printf 'Published approved content to [The Tempest](%s%s/). GitHub Pages may take a minute to update.\n' "$SITE_URL" "$BASE_PATH" >> "$GITHUB_STEP_SUMMARY"

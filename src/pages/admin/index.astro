@@ -1,0 +1,46 @@
+---
+import Site from '../../layouts/Site.astro';
+import Icon from '../../components/Icon.astro';
+import { site, url } from '../../lib/content';
+const cmsUrl = `https://app.pagescms.org/${site.editorialRepo}/main`;
+---
+
+<Site title="Editorial desk"
+  ><main id="main" class="site-main editorial-page">
+    <div class="page-intro">
+      <span class="eyebrow accent">For the editorial team</span><h1>The editorial desk.</h1><p>
+        A home for the next issue.
+      </p>
+    </div><div class="editorial-welcome">
+      <div>
+        <span class="eyebrow">Your publishing workspace</span><h2>Prepare the next issue.</h2><p>
+          Manage issues, works, and author profiles in the editing dashboard. Save your changes as
+          drafts, check the preview, then publish when everything is ready.
+        </p><a class="button button-primary" href={cmsUrl}
+          >Open editing dashboard <Icon name="arrow" /></a
+        ><p class="small-note">Administrator sign-in required.</p>
+      </div><ol class="editorial-steps">
+        <li>
+          <span>01</span><div>
+            <h3>Create an issue</h3><p>
+              Add the year and upload its PDF. The cover is prepared automatically.
+            </p>
+          </div>
+        </li><li>
+          <span>02</span><div>
+            <h3>Add the voices</h3><p>
+              Create author profiles and companion works. Choose what appears on the homepage.
+            </p>
+          </div>
+        </li><li>
+          <span>03</span><div>
+            <h3>Make it ready</h3><p>
+              Save a draft, build a private preview for the maintainer to review, and publish the
+              approved issue.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div><a class="breadcrumb" href={url('/')}>← Return to the publication</a>
+  </main></Site
+>

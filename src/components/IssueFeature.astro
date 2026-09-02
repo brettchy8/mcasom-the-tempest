@@ -1,0 +1,89 @@
+---
+import type { Issue } from '../lib/content';
+import { worksFor, readerUrl, issueUrl, url, preview } from '../lib/content';
+import WorkCard from './WorkCard.astro';
+import Icon from './Icon.astro';
+interface Props {
+  issue: Issue;
+  isHome?: boolean;
+}
+const { issue, isHome = false } = Astro.props;
+const allWorks = worksFor(issue);
+const featured = issue.featuredWorks
+  .map((s) => allWorks.find((w) => w.slug === s))
+  .filter(Boolean) as typeof allWorks;
+const selected = featured.length ? featured : allWorks.slice(0, 3);
+---
+
+<section class="issue-feature" aria-label={`${issue.year} issue`}>
+  <div class="issue-intro">
+    <div class="issue-kicker">
+      <span class="eyebrow">{isHome ? 'The current issue' : 'The annual issue'}</span><span
+        class="issue-dot"
+        aria-hidden="true"></span>
+    </div><h1>{issue.year}</h1><div class="short-rule"></div><p class="issue-description">
+      {issue.description}
+    </p>
+    <div class="issue-actions">
+      <a class="button button-primary" href={readerUrl(issue)}
+        >Read the issue <Icon name="arrow" /></a
+      ><a class="button button-outline" href={url(issue.pdf)} download={`${issue.year}.pdf`}
+        >Download PDF <Icon name="download" size={17} /></a>
+    </div><p class="issue-meta eyebrow muted">{issue.pageCount} pages <i>·</i> {issue.fileSize}</p>
+  </div>
+  <figure class="hero-figure">
+    <a href={readerUrl(issue)} aria-label={`Read The Tempest ${issue.year}`}
+      ><img
+        class:list={['hero-image', { 'is-cover': !issue.heroImage }]}
+        src={url(issue.heroImage || issue.cover)}
+        alt={issue.heroImage
+          ? issue.heroCredit || `Featured image for the ${issue.year} issue`
+          : `Cover of The Tempest ${issue.year}`}
+        fetchpriority="high"
+        width="700"
+        height="800"
+      /><span class="hero-open"><Icon name="book" size={18} /> Open the issue</span></a
+    ><figcaption>{issue.heroCredit || `The Tempest · ${issue.year} cover`}</figcaption>
+  </figure>
+  <aside class="featured-works">
+    <div class="featured-heading">
+      <h2>In this issue</h2><span
+        >{selected.length ? String(selected.length).padStart(2, '0') : issue.year}</span>
+    </div>
+    {
+      selected.length ? (
+        <>
+          {preview && selected.some((w) => w.demo) && (
+            <p class="sample-label">Sample companion works · Design preview</p>
+          )}
+          {selected.map((work, index) => (
+            <WorkCard work={work} index={index} />
+          ))}
+          <a class="text-link" href={`${issueUrl(issue)}#works`}>
+            Explore the issue <Icon name="arrow" size={16} />
+          </a>
+        </>
+      ) : (
+        <div class="issue-empty">
+          <>
+            <span class="eyebrow accent">The complete collection</span>
+            <h3>
+              A year of seeing
+              <>
+                <br />
+                <em>things differently.</em>
+              </>
+            </h3>
+            <p>
+              Discover the poetry, prose, photography, and art collected in this edition of The
+              Tempest.
+            </p>
+            <a class="text-link" href={readerUrl(issue)}>
+              Browse the pages <Icon name="arrow" size={16} />
+            </a>
+          </>
+        </div>
+      )
+    }
+  </aside>
+</section>

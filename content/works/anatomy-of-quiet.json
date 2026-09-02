@@ -1,0 +1,24 @@
+{
+  "slug": "anatomy-of-quiet",
+  "title": "Anatomy of quiet",
+  "author": "alex-morgan",
+  "category": "Poetry",
+  "excerpt": "You learn the names for the parts that break the slowest.",
+  "body": "You learn the names\nfor the parts that break\nthe slowest.\n\nBut no one teaches you\nthe weight of a pause,\nthe space between a question\nand the courage to ask it.\n\nAt the window, evening\nfinds the empty chair.\nFor a moment,\nwe let the light stay.",
+  "format": "poetry",
+  "image": "/media/images/sample-light.jpg",
+  "artworks": [],
+  "recordings": [
+    {
+      "file": "/media/audio/sample-reading.mp3",
+      "title": "Sample recording",
+      "description": "Audio from the original repository, included to demonstrate the player. This is not a reading of the sample poem."
+    }
+  ],
+  "issue": "2026",
+  "order": 1,
+  "status": "published",
+  "demo": true,
+  "pdfPage": null,
+  "about": "This is a demonstration companion page, not a contribution from the printed issue."
+}

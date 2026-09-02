@@ -1,0 +1,36 @@
+{
+  "name": "the-tempest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node scripts/prepare.mjs --preview && astro dev --host 127.0.0.1",
+    "build": "node scripts/prepare.mjs && astro build",
+    "build:preview": "node scripts/prepare.mjs --preview && astro build",
+    "preview": "astro preview --host 127.0.0.1",
+    "check": "astro check",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "5.3.0",
+    "@fontsource/manrope": "^5.2.8",
+    "@napi-rs/canvas": "^1.0.8",
+    "astro": "7.2.10",
+    "marked": "^17.0.0",
+    "page-flip": "2.0.7",
+    "pdfjs-dist": "6.3.289",
+    "sanitize-html": "^2.17.0",
+    "yaml": "^2.8.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@types/sanitize-html": "^2.16.0",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.9.3"
+  }
+}

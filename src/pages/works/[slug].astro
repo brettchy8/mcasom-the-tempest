@@ -1,0 +1,112 @@
+---
+import Site from '../../layouts/Site.astro';
+import Icon from '../../components/Icon.astro';
+import { works, authorFor, issueUrl, readerUrl, url, prose, initials } from '../../lib/content';
+export function getStaticPaths() {
+  return works.map((work) => ({ params: { slug: work.slug }, props: { work } }));
+}
+const { work } = Astro.props;
+const author = authorFor(work);
+---
+
+<Site title={work.title} description={work.excerpt}
+  ><main id="main" class="work-page site-main">
+    <a class="breadcrumb" href={issueUrl(work.issue)}>← The {work.issue} issue</a>
+    {
+      work.demo && (
+        <p class="demo-notice">
+          Design preview · This work and author are placeholders, not part of the printed issue.
+        </p>
+      )
+    }
+    <header class="work-header">
+      <div class="eyebrow accent">{work.category} <i>·</i> {work.issue}</div><h1>{work.title}</h1><p
+        class="work-author"
+      >
+        by <a href={url(`/authors/${author.slug}/`)}>{author.name}</a>
+      </p>
+    </header>
+    <div class="work-reading-layout">
+      <aside class="work-margin">
+        <span class="eyebrow">The companion</span><p>A closer look at<br />the work.</p>{
+          work.pdfPage && (
+            <a class="text-link" href={readerUrl(work.issue, work.pdfPage)}>
+              Read in issue <Icon name="arrow" size={15} />
+            </a>
+          )
+        }{
+          work.recordings.length > 0 && (
+            <a class="text-link" href="#listen">
+              <Icon name="headphones" size={16} /> Listen to audio
+            </a>
+          )
+        }
+      </aside>
+      <div class="work-body">
+        {
+          work.body &&
+            (work.format === 'poetry' ? (
+              <div class="poem">{work.body}</div>
+            ) : (
+              <div class="prose" set:html={prose(work.body)} />
+            ))
+        }
+        {
+          work.artworks.map((art) => (
+            <figure class="work-art">
+              <>
+                <img src={url(art.image)} alt={art.alt} loading="lazy" />
+                <figcaption>{art.caption}</figcaption>
+              </>
+            </figure>
+          ))
+        }
+        {
+          work.recordings.length > 0 && (
+            <section class="audio-section" id="listen">
+              <h2>The work, in voice.</h2>
+              {work.recordings.map((recording) => (
+                <div class="audio-card">
+                  <div class="audio-card-title">
+                    <Icon name="headphones" />
+                    <h3>{recording.title}</h3>
+                  </div>
+                  {recording.description && <p>{recording.description}</p>}
+                  <audio controls preload="none" aria-label={recording.title}>
+                    <source src={url(recording.file)} type="audio/mpeg" />
+                    <a href={url(recording.file)}>Download recording</a>
+                  </audio>
+                  <a class="audio-download" href={url(recording.file)} download>
+                    Download MP3
+                  </a>
+                </div>
+              ))}
+            </section>
+          )
+        }
+        {
+          work.about && (
+            <section class="work-note">
+              <>
+                <span class="eyebrow">About the work</span>
+                <div class="prose" set:html={prose(work.about)} />
+              </>
+            </section>
+          )
+        }
+        <a class="author-teaser" href={url(`/authors/${author.slug}/`)}
+          >{
+            author.portrait ? (
+              <img src={url(author.portrait)} alt={author.name} loading="lazy" />
+            ) : (
+              <span class="avatar-letter">{initials(author.name)}</span>
+            )
+          }<div>
+            <span class="eyebrow">About the author</span><h2>{author.name}</h2><span
+              class="text-link">Meet the author <Icon name="arrow" size={16} /></span>
+          </div></a
+        >
+      </div>
+    </div>
+  </main></Site
+>
