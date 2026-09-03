@@ -554,12 +554,13 @@ a {
 }
 .work-header h1 {
   max-width: 70rem;
-  margin: 1.7rem auto 0.8rem;
+  margin: 1.7rem auto 0;
   font: 400 clamp(5rem, 10vw, 10rem)/0.75 var(--serif);
   letter-spacing: -0.05em;
 }
 .work-author {
   font: italic 1.65rem/1 var(--serif);
+  margin: clamp(2.5rem, 4vw, 4rem) 0 0;
 }
 .work-author a {
   text-underline-offset: 0.25rem;
@@ -693,13 +694,21 @@ a {
   color: var(--paper);
   font-size: 1.4rem;
 }
+.author-teaser > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
 .author-teaser h3 {
   font: 400 1.6rem/1.1 var(--serif);
-  margin: 0 0 0.7rem;
+  margin: 0;
   overflow-wrap: anywhere;
 }
 .author-teaser .text-link {
   font-size: 0.5rem;
+  margin-top: 0;
+  padding: 0.1rem 0;
 }
 .author-profile {
   display: grid;
