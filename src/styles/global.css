@@ -923,12 +923,9 @@ a {
   }
   .footer-reflection > p {
     margin: 0;
-    font-size: clamp(0.625rem, 3vw, 1.25rem);
+    font-size: clamp(1rem, 4vw, 1.5rem);
     white-space: nowrap;
     text-wrap: nowrap;
-  }
-  .footer-reflection > p br {
-    display: none;
   }
   .school-lockup {
     margin: 0;
