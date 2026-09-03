@@ -81,5 +81,5 @@ for (const dir of ['cmaps', 'standard_fonts', 'wasm']) {
 }
 await writeFile('public/.nojekyll', '');
 console.log(
-  `Prepared ${data.issues.length} issues, ${data.works.length} works, ${data.authors.length} authors (${data.preview ? 'preview, includes samples/drafts' : 'published only'}).`,
+  `Prepared ${data.issues.length} issues, ${data.works.length} works, ${data.authors.length} authors (${data.preview ? 'preview, includes drafts' : 'published only'}).`,
 );

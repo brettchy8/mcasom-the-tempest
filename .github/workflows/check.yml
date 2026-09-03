@@ -23,7 +23,7 @@ jobs:
         env:
           BASE_PATH: /mcasom-the-tempest
       - run: npm run check
-      - name: Check production excludes sample content
+      - name: Check production excludes test drafts
         run: |
           test ! -d dist/works/anatomy-of-quiet
           test ! -f dist/media/audio/sample-reading.mp3

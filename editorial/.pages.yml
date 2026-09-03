@@ -29,7 +29,10 @@ content:
     type: collection
     path: content/issues
     format: json
-    filename: "{fields.year}.json"
+    filename:
+      template: "{primary}.json"
+      field: false
+    subfolders: false
     view:
       primary: year
       fields:
@@ -42,10 +45,6 @@ content:
         type: string
         required: true
         pattern: ^\d{4}$
-      - name: title
-        label: Title
-        type: string
-        required: true
       - &a1
         name: status
         label: Publication status
@@ -59,12 +58,6 @@ content:
               label: Draft
             - name: published
               label: Ready to publish
-      - &a2
-        name: demo
-        label: Sample content
-        type: boolean
-        default: false
-        description: Sample content appears in previews only, even when marked ready.
       - name: description
         label: Introduction
         type: text
@@ -87,7 +80,7 @@ content:
         type: reference
         options:
           collection: works
-          value: "{fields.slug}"
+          value: "{path}"
           label: "{fields.title}"
           search: title
           multiple: true
@@ -99,9 +92,11 @@ content:
           - name: title
             label: Section title
             type: string
+            required: true
           - name: page
             label: PDF page number
             type: number
+            required: true
             options:
               min: 1
         description: Use the PDF page number, counting the cover as page 1.
@@ -112,7 +107,10 @@ content:
     type: collection
     path: content/works
     format: json
-    filename: "{fields.slug}.json"
+    filename:
+      template: "{primary}.json"
+      field: false
+    subfolders: false
     view:
       primary: title
       fields:
@@ -120,20 +118,11 @@ content:
         - status
       sort: title
     fields:
-      - &a3
-        name: slug
-        label: Web address
-        type: string
-        required: true
-        pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$
-        description: A short permanent address, such as anatomy-of-quiet. Use lowercase
-          letters and hyphens.
       - name: title
         label: Title
         type: string
         required: true
       - *a1
-      - *a2
       - name: issue
         label: Issue
         type: reference
@@ -149,7 +138,7 @@ content:
         type: reference
         options:
           collection: authors
-          value: "{fields.slug}"
+          value: "{path}"
           label: "{fields.name}"
           search: name
           multiple: false
@@ -165,10 +154,6 @@ content:
             - Photography
             - Visual art
             - Other
-      - name: order
-        label: Reading order
-        type: number
-        default: 0
       - name: body
         label: The written work
         type: text
@@ -187,6 +172,7 @@ content:
             type: image
             options:
               media: images
+            required: true
           - name: alt
             label: Image description
             type: string
@@ -200,9 +186,9 @@ content:
         list: true
         fields:
           - name: title
-            label: Recording title
+            label: Recording title override
             type: string
-            required: true
+            description: Optional. Leave empty to use Audio recording.
           - name: file
             label: MP3 file
             type: file
@@ -226,6 +212,14 @@ content:
         options:
           format: markdown
           media: false
+      - name: order
+        label: Reading order override
+        type: number
+        options:
+          min: 0
+        description: Optional. Normally works follow PDF page order, then title for
+          works without a page. Enter a number to use instead of the PDF page
+          when sorting. Homepage selections have their own order.
     operations:
       rename: false
   - name: authors
@@ -233,7 +227,10 @@ content:
     type: collection
     path: content/authors
     format: json
-    filename: "{fields.slug}.json"
+    filename:
+      template: "{primary}.json"
+      field: false
+    subfolders: false
     view:
       primary: name
       fields:
@@ -241,13 +238,11 @@ content:
         - status
       sort: name
     fields:
-      - *a3
       - name: name
         label: Name
         type: string
         required: true
       - *a1
-      - *a2
       - name: portrait
         label: Portrait
         type: image
@@ -261,15 +256,28 @@ content:
           media: false
     operations:
       rename: false
+  - name: about
+    label: About
+    type: file
+    path: content/about.json
+    format: json
+    fields:
+      - name: about
+        label: About the publication
+        type: rich-text
+        options:
+          format: markdown
+          media: false
+      - name: tagline
+        label: Footer statement
+        type: text
+        description: Line breaks are preserved in the footer.
   - name: site
-    label: Site settings & About
+    label: Site settings
     type: file
     path: content/site.json
     format: json
     fields:
-      - name: title
-        label: Publication name
-        type: string
       - name: school
         label: School name
         type: string
@@ -277,7 +285,7 @@ content:
         label: Site description
         type: text
       - name: currentIssue
-        label: Current issue
+        label: Homepage issue override
         type: reference
         options:
           collection: issues
@@ -285,22 +293,14 @@ content:
           label: "{fields.year}"
           search: year
           multiple: false
-      - name: tagline
-        label: Footer statement
-        type: text
-      - name: about
-        label: About the publication
-        type: rich-text
-        options:
-          format: markdown
-          media: false
+        description: Optional. Leave empty to show the newest published issue automatically.
       - name: editorialRepo
         label: Editorial repository
         type: string
         hidden: true
 actions:
   - name: preview
-    label: Preview website
+    label: Build private preview
     workflow: preview.yml
     confirm: false
   - name: publish
@@ -308,6 +308,5 @@ actions:
     workflow: publish.yml
     confirm:
       title: Publish the approved website?
-      message: This publishes all content marked Ready to publish. Drafts and sample
-        content stay private.
+      message: This publishes all content marked Ready to publish. Drafts stay private.
       button: Publish website

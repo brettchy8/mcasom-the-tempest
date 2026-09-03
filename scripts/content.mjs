@@ -5,6 +5,17 @@ import { workExcerpt } from './text.mjs';
 
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 const year = z.string().regex(/^\d{4}$/);
+// CMS references use the saved filename, so changing a title never changes a URL.
+// Accept legacy IDs as well while older editorial revisions remain in Git history.
+const reference = (collection) =>
+  z.preprocess((value) => {
+    const prefix = `content/${collection}/`;
+    return typeof value === 'string' && value.startsWith(prefix) && value.endsWith('.json')
+      ? value.slice(prefix.length, -5)
+      : value;
+  }, slug);
+const optionalNumber = (schema) =>
+  z.preprocess((value) => (value === '' || value == null ? null : value), schema.nullable());
 const media = z
   .string()
   .refine(
@@ -19,16 +30,14 @@ const media = z
   );
 const common = {
   status: z.enum(['draft', 'published']).default('draft'),
-  demo: z.boolean().default(false),
 };
 export const issueSchema = z.object({
   ...common,
   year,
-  title: z.string().min(1),
   description: z.string().default(''),
   pdf: media.refine((v) => v.endsWith('.pdf')),
   heroCredit: z.string().default(''),
-  featuredWorks: z.array(slug).default([]),
+  featuredWorks: z.array(reference('works')).default([]),
   sections: z
     .array(z.object({ title: z.string().min(1), page: z.number().int().positive() }))
     .default([]),
@@ -44,12 +53,12 @@ export const workSchema = z.object({
   ...common,
   slug,
   title: z.string().min(1),
-  author: slug,
+  author: reference('authors'),
   issue: year,
   category: z.string().min(1),
-  order: z.number().default(0),
+  order: optionalNumber(z.number().int().nonnegative()),
   body: z.string().default(''),
-  pdfPage: z.number().int().positive().nullable().default(null),
+  pdfPage: optionalNumber(z.number().int().positive()),
   about: z.string().default(''),
   artworks: z
     .array(
@@ -64,17 +73,22 @@ export const workSchema = z.object({
     .array(
       z.object({
         file: media.refine((v) => v.endsWith('.mp3')),
-        title: z.string().min(1),
+        title: z
+          .string()
+          .nullish()
+          .transform((value) => value?.trim() || ''),
         description: z.string().default(''),
       }),
     )
     .default([]),
 });
 const siteSchema = z.object({
-  title: z.string(),
   school: z.string(),
   description: z.string(),
-  currentIssue: year,
+  currentIssue: z.preprocess(
+    (value) => (value === '' || value == null ? null : value),
+    year.nullable(),
+  ),
   tagline: z.string(),
   about: z.string(),
   editorialRepo: z.string().regex(/^[\w.-]+\/[\w.-]+$/),
@@ -84,7 +98,10 @@ async function collection(root, name, schema) {
   const files = (await readdir(path.join(root, name))).filter((f) => f.endsWith('.json')).sort();
   return Promise.all(
     files.map(async (f) => {
-      const result = schema.safeParse(JSON.parse(await readFile(path.join(root, name, f), 'utf8')));
+      const entry = JSON.parse(await readFile(path.join(root, name, f), 'utf8'));
+      // The filename is created once by Pages CMS, including a suffix for duplicate names.
+      if (name !== 'issues') entry.slug = f.slice(0, -5);
+      const result = schema.safeParse(entry);
       if (!result.success) throw new Error(`${name}/${f}: ${result.error.message}`);
       const id = result.data.slug || result.data.year;
       if (f !== `${id}.json`) throw new Error(`${name}/${f}: filename must match ${id}.json`);
@@ -94,13 +111,17 @@ async function collection(root, name, schema) {
 }
 
 export async function loadContent(root, preview = false) {
-  const [issues, works, authors, rawSite] = await Promise.all([
+  const [issues, works, authors, rawSite, rawAbout] = await Promise.all([
     collection(root, 'issues', issueSchema),
     collection(root, 'works', workSchema),
     collection(root, 'authors', authorSchema),
     readFile(path.join(root, 'site.json'), 'utf8'),
+    readFile(path.join(root, 'about.json'), 'utf8').catch((error) => {
+      if (error.code === 'ENOENT') return '{}';
+      throw error;
+    }),
   ]);
-  const visible = (item) => preview || (item.status === 'published' && !item.demo);
+  const visible = (item) => preview || item.status === 'published';
   const publishedIssues = issues.filter(visible).sort((a, b) => b.year.localeCompare(a.year));
   const publishedAuthors = authors.filter(visible);
   const publishedWorks = works
@@ -116,7 +137,7 @@ export async function loadContent(root, preview = false) {
     if (!publishedAuthors.some((a) => a.slug === w.author))
       throw new Error(`${w.slug}: publish the author before publishing their work`);
   }
-  const site = siteSchema.parse(JSON.parse(rawSite));
+  const site = siteSchema.parse({ ...JSON.parse(rawSite), ...JSON.parse(rawAbout) });
   if (!publishedIssues.length) throw new Error('At least one issue must be published');
   if (!publishedIssues.some((i) => i.year === site.currentIssue))
     site.currentIssue = publishedIssues[0].year;
@@ -130,8 +151,22 @@ export async function loadContent(root, preview = false) {
       ),
     })),
     works: publishedWorks
-      .sort((a, b) => a.order - b.order)
-      .map((work) => ({ ...work, excerpt: workExcerpt(work.body, work.category) })),
+      .sort(
+        (a, b) =>
+          (a.order ?? a.pdfPage ?? Infinity) - (b.order ?? b.pdfPage ?? Infinity) ||
+          a.title.localeCompare(b.title, 'en') ||
+          a.slug.localeCompare(b.slug, 'en'),
+      )
+      .map((work) => ({
+        ...work,
+        excerpt: workExcerpt(work.body, work.category),
+        recordings: work.recordings.map((recording, index) => ({
+          ...recording,
+          title:
+            recording.title ||
+            (work.recordings.length > 1 ? `Audio recording ${index + 1}` : 'Audio recording'),
+        })),
+      })),
     authors: publishedAuthors,
   };
 }

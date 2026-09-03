@@ -1,14 +1,13 @@
 {
   "year": "2026",
-  "title": "The Tempest 2026",
   "description": "Art, poetry, photography, prose, and the human experience.",
   "pdf": "/media/pdfs/2026.pdf",
   "status": "published",
   "heroCredit": "As the Storm Approaches · Isaac Daybell",
   "featuredWorks": [
-    "anatomy-of-quiet",
-    "between-shifts",
-    "the-light-we-leave"
+    "content/works/anatomy-of-quiet.json",
+    "content/works/between-shifts.json",
+    "content/works/the-light-we-leave.json"
   ],
   "sections": [
     {

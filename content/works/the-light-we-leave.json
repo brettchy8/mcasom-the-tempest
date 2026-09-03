@@ -1,7 +1,6 @@
 {
-  "slug": "the-light-we-leave",
   "title": "The light we leave",
-  "author": "riley-chen",
+  "author": "content/authors/riley-chen.json",
   "category": "Visual art",
   "body": "A space for the artist’s note: the idea behind a work, the process of making it, or the moment that inspired it.",
   "artworks": [
@@ -14,8 +13,7 @@
   "recordings": [],
   "issue": "2026",
   "order": 3,
-  "status": "published",
-  "demo": true,
+  "status": "draft",
   "pdfPage": null,
   "about": "This is a demonstration companion page, not a contribution from the printed issue."
 }

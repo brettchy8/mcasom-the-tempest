@@ -5,7 +5,6 @@ export { isPoetry } from '../../scripts/text.mjs';
 
 export interface Issue {
   year: string;
-  title: string;
   description: string;
   pdf: string;
   heroCredit: string;
@@ -18,7 +17,6 @@ export interface Issue {
   pageRatio: number;
   fileSize: string;
   status: string;
-  demo: boolean;
 }
 export interface Work {
   slug: string;
@@ -26,14 +24,13 @@ export interface Work {
   author: string;
   issue: string;
   category: string;
-  order: number;
+  order: number | null;
   excerpt: string;
   body: string;
   pdfPage: number | null;
   about: string;
   artworks: { image: string; alt: string; caption: string }[];
   recordings: { file: string; title: string; description: string }[];
-  demo: boolean;
   status: string;
 }
 export interface Author {
@@ -41,7 +38,6 @@ export interface Author {
   name: string;
   bio: string;
   portrait: string;
-  demo: boolean;
   status: string;
 }
 export const content = raw as {

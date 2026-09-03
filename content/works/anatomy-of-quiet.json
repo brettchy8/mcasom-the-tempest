@@ -1,7 +1,6 @@
 {
-  "slug": "anatomy-of-quiet",
   "title": "Anatomy of quiet",
-  "author": "alex-morgan",
+  "author": "content/authors/alex-morgan.json",
   "category": "Poetry",
   "body": "You learn the names\nfor the parts that break\nthe slowest.\n\nBut no one teaches you\nthe weight of a pause,\nthe space between a question\nand the courage to ask it.\n\nAt the window, evening\nfinds the empty chair.\nFor a moment,\nwe let the light stay.",
   "artworks": [],
@@ -14,8 +13,7 @@
   ],
   "issue": "2026",
   "order": 1,
-  "status": "published",
-  "demo": true,
+  "status": "draft",
   "pdfPage": null,
   "about": "This is a demonstration companion page, not a contribution from the printed issue."
 }

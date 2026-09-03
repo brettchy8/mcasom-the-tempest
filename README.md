@@ -11,13 +11,13 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:4321`. Development includes clearly marked sample works so the full design can be reviewed. Their text and names are placeholders; they are not extracted from the magazine. The sample recording comes from the previous demo site and is labeled accordingly.
+Open `http://localhost:4321`. Development includes sample works saved as drafts so the full design can be reviewed. Their text and names are placeholders; they are not extracted from the magazine. The sample recording comes from the previous demo site and is labeled accordingly.
 
 ```sh
 npm test                  # Publication rules and content relationships
-npm run build             # Published content only; excludes samples and drafts
+npm run build             # Published content only; excludes drafts
 npm run check             # Astro and TypeScript diagnostics
-npm run build:preview     # Includes samples and drafts; keep private for real content
+npm run build:preview     # Includes drafts; keep private for real content
 npm run preview           # Serve the most recent build locally
 ```
 
@@ -25,9 +25,9 @@ The prepare script validates JSON, copies only media referenced by included reco
 
 ## Editing and publishing
 
-Use the separate [private editorial workspace](https://github.com/qais8r/tempest-editorial). Its [Pages CMS dashboard](https://app.pagescms.org/qais8r/tempest-editorial/main) provides forms for Issues, Works, Authors, and Site settings. See [the editor guide](editorial/README.md) and [setup notes](docs/editorial-workspace.md).
+Use the separate [private editorial workspace](https://github.com/qais8r/tempest-editorial). Its [Pages CMS dashboard](https://app.pagescms.org/qais8r/tempest-editorial/main) provides forms for Issues, Works, Authors, About, and occasional Site settings. See [the editor guide](editorial/README.md) and [setup notes](docs/editorial-workspace.md).
 
-Saving a CMS record commits it privately. **Preview website** builds a private downloadable artifact. **Publish website** builds only records marked Ready to publish and pushes static files to a separate public GitHub Pages repository through a repository-specific deploy key. GitHub Pages preview URLs are public; unpublished material must not be deployed there. A protected browser preview can be added later with another host.
+Saving a CMS record commits it privately. **Build private preview** builds a private downloadable artifact. **Publish website** builds only records marked Ready to publish and pushes static files to a separate public GitHub Pages repository through a repository-specific deploy key. GitHub Pages preview URLs are public; unpublished material must not be deployed there. A protected browser preview can be added later with another host.
 
 The `content/` folder here is a public development fixture. It includes the supplied 2018, 2019, 2020, 2021, 2022, 2023, and 2026 PDFs. It is not the live editorial database. All future drafts and uploads belong in the private workspace. To build against it locally:
 
@@ -37,14 +37,19 @@ CONTENT_DIR=/absolute/path/to/tempest-editorial/content npm run dev
 
 ## Content model
 
-| Record | Fields                                                                                                                          |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| Issue  | Year, title, introduction, PDF, cover title and credit, ordered featured works, PDF contents links                              |
-| Work   | Title, permanent slug, one author, one issue, category, reading order, text, artwork gallery, MP3 recordings, optional PDF page |
-| Author | Name, permanent slug, biography, optional portrait                                                                              |
-| Site   | Publication name, school, current issue, description, About copy, footer statement                                              |
+| Record | Fields                                                                                             |
+| ------ | -------------------------------------------------------------------------------------------------- |
+| Issue  | Year, introduction, PDF, cover credit, ordered featured works, PDF contents links                  |
+| Work   | Title, author, issue, category, text, artwork, MP3 recordings, optional PDF page and sort override |
+| Author | Name, biography, optional portrait                                                                 |
+| About  | About copy and footer statement                                                                    |
+| Site   | School, description, optional homepage issue override, hidden editorial repository                 |
 
-Every issue, work, and author has Draft/Ready status and a sample flag. Sample content is always excluded from production. A ready work requires a ready author and a published issue. The first PDF page supplies the cover and its proportions. Work excerpts are generated from the opening text, up to 120 characters with `...` for longer text. The first gallery image supplies the thumbnail; works without artwork use the full card width for text. The Poetry category preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
+Every issue, work, and author has Draft/Ready status. Test content is an ordinary draft and can be deleted after testing. A ready work requires a ready author and a published issue. The newest published year is the homepage issue unless an override is selected.
+
+Pages CMS creates work and author filenames from the initial title or name, appending a number on collisions. Filenames remain unchanged after edits and supply the permanent URL IDs. References store the saved repository path. The loader accepts legacy IDs as well. Editors never type a slug or filename. Works sort by optional override, otherwise PDF page, then alphabetically by title. Recording titles fall back to Audio recording when blank.
+
+The first PDF page supplies the cover and its proportions. Work excerpts are generated from the opening text, up to 120 characters with `...` for longer text. The first gallery image supplies the thumbnail; works without artwork use the full card width for text. The Poetry category preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
 
 ## Hosting
 

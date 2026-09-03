@@ -1,4 +1,4 @@
-name: Preview website privately
+name: Build private preview
 on:
   workflow_dispatch:
     inputs:
@@ -45,7 +45,7 @@ jobs:
         run: |
           cat >> "$GITHUB_STEP_SUMMARY" <<'NOTE'
           ## Private preview built
-          Download **private-preview** from this run. It contains drafts and sample content, so it is accessible only to this private repository's collaborators.
+          Download **private-preview** from this run. It contains drafts, so it is accessible only to this private repository's collaborators.
 
           A maintainer can serve the downloaded folder locally. GitHub Pages cannot provide a private browser preview on this setup. Protected browser previews can be added with Cloudflare Access later.
 

@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, mkdir, writeFile, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { loadContent, referencedMedia, mediaPath, workSchema } from '../scripts/content.mjs';
+import { simplifyEditorial } from '../scripts/simplify-editorial.mjs';
 import { isPoetry, workExcerpt } from '../scripts/text.mjs';
 
 async function fixture(t, overrides = {}) {
@@ -63,8 +64,7 @@ async function fixture(t, overrides = {}) {
         issue: '2026',
         author: 'writer',
         category: 'Poetry',
-        status: 'published',
-        demo: true,
+        status: 'draft',
         artworks: [{ image: '/media/images/sample.jpg', alt: 'Sample artwork' }],
       },
       {
@@ -91,7 +91,7 @@ async function fixture(t, overrides = {}) {
   return root;
 }
 
-test('production excludes draft and sample records, assets and homepage references', async (t) => {
+test('production excludes all draft records, assets and homepage references', async (t) => {
   const data = await loadContent(await fixture(t));
   assert.deepEqual(
     data.issues.map((i) => i.year),
@@ -112,7 +112,7 @@ test('production excludes draft and sample records, assets and homepage referenc
   ]);
   assert.ok(!JSON.stringify(data).includes('Secret'));
 });
-test('private preview includes drafts and sample content', async (t) => {
+test('private preview includes drafts for review', async (t) => {
   const data = await loadContent(await fixture(t), true);
   assert.equal(data.issues.length, 2);
   assert.equal(data.works.length, 4);
@@ -247,4 +247,123 @@ test('long excerpts truncate at words with three dots and leave short text intac
   );
   assert.equal(workExcerpt('A brief work.', 'Prose'), 'A brief work.');
   assert.equal(workExcerpt('🌊'.repeat(30), 'Poetry', 12), '🌊'.repeat(9) + '...');
+});
+
+test('saved filenames keep addresses and references stable after names change', async (t) => {
+  const root = await fixture(t);
+  const work = {
+    title: 'A new title',
+    issue: '2026',
+    author: 'content/authors/writer.json',
+    category: 'Poetry',
+    status: 'published',
+  };
+  await writeFile(path.join(root, 'works/a-poem.json'), JSON.stringify(work));
+  await writeFile(path.join(root, 'works/a-poem-1.json'), JSON.stringify(work));
+  await writeFile(
+    path.join(root, 'authors/writer.json'),
+    JSON.stringify({ name: 'New display name', status: 'published' }),
+  );
+  const issue = {
+    year: '2026',
+    pdf: '/media/pdfs/2026.pdf',
+    status: 'published',
+    featuredWorks: ['content/works/a-poem-1.json', 'content/works/a-poem.json'],
+  };
+  await writeFile(path.join(root, 'issues/2026.json'), JSON.stringify(issue));
+  const data = await loadContent(root);
+  assert.deepEqual(
+    data.works.map((w) => w.slug),
+    ['a-poem', 'a-poem-1'],
+  );
+  assert.ok(data.works.every((w) => w.author === 'writer'));
+  assert.equal(data.authors[0].name, 'New display name');
+  assert.deepEqual(data.issues[0].featuredWorks, ['a-poem-1', 'a-poem']);
+});
+
+test('works sort by PDF page, then title, with optional position overrides', async (t) => {
+  const base = { issue: '2026', author: 'writer', category: 'Prose', status: 'published' };
+  const data = await loadContent(
+    await fixture(t, {
+      works: [
+        { ...base, slug: 'z-web', title: 'Z web' },
+        { ...base, slug: 'late', title: 'Late', pdfPage: 20, order: '' },
+        { ...base, slug: 'early', title: 'Early', pdfPage: 2, order: null },
+        { ...base, slug: 'a-web', title: 'A web', pdfPage: null },
+        { ...base, slug: 'override', title: 'Override', pdfPage: 30, order: 1 },
+      ],
+    }),
+  );
+  assert.deepEqual(
+    data.works.map((w) => w.slug),
+    ['override', 'early', 'late', 'a-web', 'z-web'],
+  );
+});
+
+test('recording labels default when omitted or cleared, and preserve custom credits', async (t) => {
+  const data = await loadContent(
+    await fixture(t, {
+      works: [
+        {
+          slug: 'a-poem',
+          title: 'A poem',
+          issue: '2026',
+          author: 'writer',
+          category: 'Poetry',
+          status: 'published',
+          recordings: [
+            { file: '/media/audio/a.mp3' },
+            { file: '/media/audio/b.mp3', title: '  ' },
+            { file: '/media/audio/c.mp3', title: null },
+            { file: '/media/audio/d.mp3', title: 'Read by a guest' },
+          ],
+        },
+      ],
+    }),
+  );
+  assert.deepEqual(
+    data.works[0].recordings.map((r) => r.title),
+    ['Audio recording 1', 'Audio recording 2', 'Audio recording 3', 'Read by a guest'],
+  );
+});
+
+test('latest published issue is automatic, with a clearable override and separate About file', async (t) => {
+  const root = await fixture(t, {
+    issues: [
+      { year: '2025', status: 'published', pdf: '/media/pdfs/2025.pdf' },
+      { year: '2026', status: 'published', pdf: '/media/pdfs/2026.pdf' },
+      { year: '2027', status: 'draft', pdf: '/media/pdfs/2027.pdf' },
+    ],
+  });
+  const site = { school: 'School', description: '', editorialRepo: 'owner/editorial' };
+  await writeFile(
+    path.join(root, 'about.json'),
+    JSON.stringify({ about: 'About text', tagline: 'Center\nfor Humanities' }),
+  );
+  for (const value of [undefined, null, '', '2025', '2027']) {
+    await writeFile(path.join(root, 'site.json'), JSON.stringify({ ...site, currentIssue: value }));
+    const data = await loadContent(root);
+    assert.equal(data.site.currentIssue, value === '2025' ? '2025' : '2026');
+    assert.equal(data.site.tagline, 'Center\nfor Humanities');
+    assert.equal(data.site.about, 'About text');
+  }
+});
+
+test('migration removes retired fields, retains sample drafts, and preserves links on repeat runs', async (t) => {
+  const root = await fixture(t);
+  const file = path.join(root, 'works/sample-poem.json');
+  const sample = JSON.parse(await readFile(file, 'utf8'));
+  await writeFile(file, JSON.stringify({ ...sample, demo: true, status: 'published' }));
+  await simplifyEditorial(root);
+  const once = await readFile(file, 'utf8');
+  const entry = JSON.parse(once);
+  assert.equal(entry.status, 'draft');
+  assert.equal(entry.demo, undefined);
+  assert.equal(entry.slug, undefined);
+  assert.equal(entry.author, 'content/authors/writer.json');
+  assert.equal(JSON.parse(await readFile(path.join(root, 'site.json'), 'utf8')).currentIssue, null);
+  assert.equal((await loadContent(root)).works.length, 1);
+  assert.equal((await loadContent(root, true)).works.length, 4);
+  await simplifyEditorial(root);
+  assert.equal(await readFile(file, 'utf8'), once);
 });

@@ -1,8 +1,6 @@
 {
-  "slug": "alex-morgan",
   "name": "Alex Morgan",
-  "bio": "This is a sample author profile for the redesign preview. An author\u2019s biography, portrait, and contributions will appear here.\n\nPoetry offers a way to pause and notice the details of everyday life. Replace this example with the contributor\u2019s own words before publication.",
+  "bio": "This is a sample author profile for the redesign preview. An author’s biography, portrait, and contributions will appear here.\n\nPoetry offers a way to pause and notice the details of everyday life. Replace this example with the contributor’s own words before publication.",
   "portrait": "",
-  "status": "published",
-  "demo": true
+  "status": "draft"
 }

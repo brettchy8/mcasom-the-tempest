@@ -5,7 +5,7 @@ const ref = (name, label, collection, value, display, multiple = false) =>
   f(name, label, 'reference', {
     options: {
       collection,
-      value: `{fields.${value}}`,
+      value: value === 'path' ? '{path}' : `{fields.${value}}`,
       label: `{fields.${display}}`,
       search: display,
       multiple,
@@ -21,33 +21,22 @@ const status = f('status', 'Publication status', 'select', {
     ],
   },
 });
-const demo = f('demo', 'Sample content', 'boolean', {
-  default: false,
-  description: 'Sample content appears in previews only, even when marked ready.',
-});
 const image = (name, label) => f(name, label, 'image', { options: { media: 'images' } });
-const slug = f('slug', 'Web address', 'string', {
-  required: true,
-  pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$',
-  description:
-    'A short permanent address, such as anatomy-of-quiet. Use lowercase letters and hyphens.',
-});
 const collection = (name, label, primary, fields) => ({
   name,
   label,
   type: 'collection',
   path: `content/${name}`,
   format: 'json',
-  filename: `{fields.${name === 'issues' ? 'year' : 'slug'}}.json`,
+  filename: { template: '{primary}.json', field: false },
+  subfolders: false,
   view: { primary, fields: [primary, 'status'], sort: primary },
   fields,
   operations: { rename: false },
 });
 const fieldsIssue = [
   f('year', 'Year', 'string', { required: true, pattern: '^\\d{4}$' }),
-  f('title', 'Title', 'string', { required: true }),
   status,
-  demo,
   f('description', 'Introduction', 'text'),
   f('pdf', 'Issue PDF', 'file', {
     required: true,
@@ -56,36 +45,31 @@ const fieldsIssue = [
     options: { media: 'pdfs', extensions: ['pdf'], rename: false },
   }),
   f('heroCredit', 'Image title and credit', 'string'),
-  ref('featuredWorks', 'Featured works, in homepage order', 'works', 'slug', 'title', true),
+  ref('featuredWorks', 'Featured works, in homepage order', 'works', 'path', 'title', true),
   f('sections', 'Reader contents', 'object', {
     list: true,
     fields: [
-      f('title', 'Section title'),
-      f('page', 'PDF page number', 'number', { options: { min: 1 } }),
+      f('title', 'Section title', 'string', { required: true }),
+      f('page', 'PDF page number', 'number', { required: true, options: { min: 1 } }),
     ],
     description: 'Use the PDF page number, counting the cover as page 1.',
   }),
 ];
 const fieldsAuthor = [
-  slug,
   f('name', 'Name', 'string', { required: true }),
   status,
-  demo,
   image('portrait', 'Portrait'),
   f('bio', 'About the author', 'rich-text', { options: { format: 'markdown', media: false } }),
 ];
 const fieldsWork = [
-  slug,
   f('title', 'Title', 'string', { required: true }),
   status,
-  demo,
   { ...ref('issue', 'Issue', 'issues', 'year', 'year'), required: true },
-  { ...ref('author', 'Author', 'authors', 'slug', 'name'), required: true },
+  { ...ref('author', 'Author', 'authors', 'path', 'name'), required: true },
   f('category', 'Category', 'select', {
     required: true,
     options: { values: ['Poetry', 'Prose', 'Photography', 'Visual art', 'Other'] },
   }),
-  f('order', 'Reading order', 'number', { default: 0 }),
   f('body', 'The written work', 'text', {
     description:
       'The opening text becomes the preview excerpt automatically. Choose Poetry to preserve line breaks and indentation. For other categories, separate paragraphs with a blank line; Markdown emphasis is supported.',
@@ -95,7 +79,7 @@ const fieldsWork = [
     description:
       'The first artwork is used in previews. Without artwork, the text fills the preview card.',
     fields: [
-      image('image', 'Artwork'),
+      { ...image('image', 'Artwork'), required: true },
       f('alt', 'Image description', 'string', { required: true }),
       f('caption', 'Caption and credit', 'text'),
     ],
@@ -103,7 +87,9 @@ const fieldsWork = [
   f('recordings', 'Audio recordings', 'object', {
     list: true,
     fields: [
-      f('title', 'Recording title', 'string', { required: true }),
+      f('title', 'Recording title override', 'string', {
+        description: 'Optional. Leave empty to use Audio recording.',
+      }),
       f('file', 'MP3 file', 'file', {
         required: true,
         options: { media: 'audio', extensions: ['mp3'] },
@@ -116,6 +102,11 @@ const fieldsWork = [
     description: 'Count the cover as page 1. Leave empty for web-only companion works.',
   }),
   f('about', 'About the work', 'rich-text', { options: { format: 'markdown', media: false } }),
+  f('order', 'Reading order override', 'number', {
+    options: { min: 0 },
+    description:
+      'Optional. Normally works follow PDF page order, then title for works without a page. Enter a number to use instead of the PDF page when sorting. Homepage selections have their own order.',
+  }),
 ];
 const config = {
   media: [
@@ -149,34 +140,46 @@ const config = {
     collection('works', 'Works', 'title', fieldsWork),
     collection('authors', 'Authors', 'name', fieldsAuthor),
     {
+      name: 'about',
+      label: 'About',
+      type: 'file',
+      path: 'content/about.json',
+      format: 'json',
+      fields: [
+        f('about', 'About the publication', 'rich-text', {
+          options: { format: 'markdown', media: false },
+        }),
+        f('tagline', 'Footer statement', 'text', {
+          description: 'Line breaks are preserved in the footer.',
+        }),
+      ],
+    },
+    {
       name: 'site',
-      label: 'Site settings & About',
+      label: 'Site settings',
       type: 'file',
       path: 'content/site.json',
       format: 'json',
       fields: [
-        f('title', 'Publication name'),
         f('school', 'School name'),
         f('description', 'Site description', 'text'),
-        ref('currentIssue', 'Current issue', 'issues', 'year', 'year'),
-        f('tagline', 'Footer statement', 'text'),
-        f('about', 'About the publication', 'rich-text', {
-          options: { format: 'markdown', media: false },
-        }),
+        {
+          ...ref('currentIssue', 'Homepage issue override', 'issues', 'year', 'year'),
+          description: 'Optional. Leave empty to show the newest published issue automatically.',
+        },
         f('editorialRepo', 'Editorial repository', 'string', { hidden: true }),
       ],
     },
   ],
   actions: [
-    { name: 'preview', label: 'Preview website', workflow: 'preview.yml', confirm: false },
+    { name: 'preview', label: 'Build private preview', workflow: 'preview.yml', confirm: false },
     {
       name: 'publish',
       label: 'Publish website',
       workflow: 'publish.yml',
       confirm: {
         title: 'Publish the approved website?',
-        message:
-          'This publishes all content marked Ready to publish. Drafts and sample content stay private.',
+        message: 'This publishes all content marked Ready to publish. Drafts stay private.',
         button: 'Publish website',
       },
     },
