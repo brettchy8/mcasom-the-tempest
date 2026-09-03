@@ -57,7 +57,14 @@ const { title, description = site.description, home = false, reader = false } = 
         <footer class="site-footer">
           <div class="footer-reflection">
             <>
-              <p>{site.tagline}</p>
+              <p>
+                {site.tagline.split(/\r?\n/).map((line, index) => (
+                  <Fragment>
+                    {index > 0 && <br />}
+                    {line}
+                  </Fragment>
+                ))}
+              </p>
               <div class="school-lockup">
                 <>
                   <img
