@@ -444,6 +444,7 @@ a {
   margin: 0.65rem 0;
 }
 .site-footer {
+  container-type: inline-size;
   width: var(--page);
   margin: auto;
   border-top: 1px solid var(--line);
@@ -459,6 +460,27 @@ a {
   font: 400 1.5rem/1.13 var(--serif);
   max-width: 36rem;
   text-wrap: balance;
+}
+.footer-tree {
+  display: none;
+  width: 12rem;
+  height: 12.5rem;
+  opacity: 0.72;
+  pointer-events: none;
+}
+@container (min-width: 60rem) {
+  .footer-reflection {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 12rem minmax(0, 1fr);
+    gap: 2rem;
+  }
+  .footer-tree {
+    display: block;
+    align-self: end;
+  }
+  .school-lockup {
+    justify-self: end;
+  }
 }
 .school-lockup {
   display: flex;

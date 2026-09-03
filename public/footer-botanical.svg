@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="250" viewBox="0 0 240 250" fill="none">
+  <defs>
+    <g id="pod" stroke="#36382f" stroke-width=".65">
+      <path d="M0 1C-4-2-4-7-1-8C2-8 3-3 0 1Z" fill="#36382f" fill-opacity=".22"/>
+      <path d="M0 0-1-6M-2-8-3-10M0-8 1-10"/>
+    </g>
+    <g id="sprig" stroke="#36382f" stroke-width=".65" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 14C0 6 1-2 0-13M0 7C-3 4-6 0-7-5M0 1C4-1 7-6 8-10M0-5-5-13M0-9 4-17"/>
+      <use href="#pod" transform="translate(0 -13) rotate(6)"/>
+      <use href="#pod" transform="translate(-7 -5) rotate(-40) scale(.85)"/>
+      <use href="#pod" transform="translate(8 -10) rotate(36)"/>
+      <use href="#pod" transform="translate(-5 -13) rotate(-28) scale(.75)"/>
+      <use href="#pod" transform="translate(4 -17) rotate(24) scale(.8)"/>
+      <path d="M-4 6C-9 7-11 4-12 1C-7 1-5 3-4 6ZM3-2C7 0 11-2 12-5C7-6 4-5 3-2Z" fill="#36382f" fill-opacity=".13"/>
+    </g>
+  </defs>
+  <g stroke="#36382f" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M125 252C116 233 116 212 120 192C125 169 133 153 135 132C138 108 139 83 148 55" stroke-width="1.7"/>
+    <path d="M123 249C119 232 120 211 124 193" stroke-width=".55"/>
+    <g stroke-width="1.05">
+      <path d="M119 220C100 207 81 204 67 190C54 179 47 163 41 147"/>
+      <path d="M120 198C104 183 95 169 93 151C91 135 84 123 77 111"/>
+      <path d="M126 178C150 166 163 149 178 132C187 120 195 107 199 95"/>
+      <path d="M134 145C122 129 111 111 110 94C109 75 103 62 96 50"/>
+      <path d="M138 108C153 101 165 89 173 75C181 61 189 51 199 44"/>
+      <path d="M121 234C144 215 169 211 189 205C201 201 208 193 214 185"/>
+    </g>
+    <g stroke-width=".7">
+      <path d="M80 201C65 201 48 198 33 188M68 191C69 178 67 169 62 159M52 172C39 171 30 164 24 155"/>
+      <path d="M100 172C83 162 74 149 71 135M94 154C102 142 101 132 99 122M89 132C84 124 85 115 87 104"/>
+      <path d="M154 158C152 143 155 133 160 123M171 140C185 140 198 132 209 122M187 118C185 107 187 98 189 89M197 103C207 99 212 92 215 85"/>
+      <path d="M114 109C100 103 92 92 89 82M110 90C118 78 118 68 115 60M103 66C94 65 89 59 87 54"/>
+      <path d="M141 86C135 73 132 59 136 43M146 64C157 59 164 50 166 40M167 85C165 72 167 62 171 54M186 55C186 45 185 36 183 29"/>
+      <path d="M145 220C148 207 152 197 159 191M165 213C172 200 181 193 190 187M187 206C198 211 209 207 217 201"/>
+    </g>
+    <g stroke-width=".55" fill="#36382f" fill-opacity=".12">
+      <path d="M121 207C112 207 108 201 107 193C115 196 119 200 121 207Z"/>
+      <path d="M128 174C131 164 139 160 145 160C142 168 136 173 128 174Z"/>
+      <path d="M135 131C127 128 124 122 125 115C132 119 135 124 135 131Z"/>
+      <path d="M137 105C142 96 148 94 153 95C151 101 144 106 137 105Z"/>
+      <path d="M74 195C66 195 60 192 58 187C65 186 72 190 74 195Z"/>
+      <path d="M179 209C185 202 191 202 195 204C190 210 184 212 179 209Z"/>
+    </g>
+  </g>
+  <g>
+    <use href="#sprig" transform="translate(148 45) rotate(12) scale(.85)"/>
+    <use href="#sprig" transform="translate(135 36) rotate(-8) scale(.68)"/>
+    <use href="#sprig" transform="translate(166 33) rotate(25) scale(.7)"/>
+    <use href="#sprig" transform="translate(183 21) rotate(-12) scale(.65)"/>
+    <use href="#sprig" transform="translate(204 38) rotate(44) scale(.77)"/>
+    <use href="#sprig" transform="translate(173 47) rotate(21) scale(.63)"/>
+    <use href="#sprig" transform="translate(93 43) rotate(-24) scale(.85)"/>
+    <use href="#sprig" transform="translate(115 53) rotate(7) scale(.6)"/>
+    <use href="#sprig" transform="translate(83 49) rotate(-43) scale(.59)"/>
+    <use href="#sprig" transform="translate(86 74) rotate(-20) scale(.65)"/>
+    <use href="#sprig" transform="translate(72 104) rotate(-29) scale(.8)"/>
+    <use href="#sprig" transform="translate(88 96) rotate(9) scale(.6)"/>
+    <use href="#sprig" transform="translate(100 114) rotate(13) scale(.58)"/>
+    <use href="#sprig" transform="translate(68 128) rotate(-22) scale(.6)"/>
+    <use href="#sprig" transform="translate(37 139) rotate(-24) scale(.8)"/>
+    <use href="#sprig" transform="translate(60 151) rotate(-11) scale(.62)"/>
+    <use href="#sprig" transform="translate(20 150) rotate(-48) scale(.55)"/>
+    <use href="#sprig" transform="translate(28 183) rotate(-56) scale(.68)"/>
+    <use href="#sprig" transform="translate(201 87) rotate(19) scale(.83)"/>
+    <use href="#sprig" transform="translate(190 82) rotate(-10) scale(.6)"/>
+    <use href="#sprig" transform="translate(218 79) rotate(32) scale(.57)"/>
+    <use href="#sprig" transform="translate(215 117) rotate(47) scale(.73)"/>
+    <use href="#sprig" transform="translate(162 117) rotate(13) scale(.63)"/>
+    <use href="#sprig" transform="translate(162 185) rotate(27) scale(.58)"/>
+    <use href="#sprig" transform="translate(195 182) rotate(45) scale(.62)"/>
+    <use href="#sprig" transform="translate(218 177) rotate(32) scale(.8)"/>
+    <use href="#sprig" transform="translate(223 198) rotate(65) scale(.58)"/>
+  </g>
+</svg>
