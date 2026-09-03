@@ -46,6 +46,28 @@ const author = authorFor(work);
       </aside>
       <div class="work-body">
         {
+          work.recordings.length > 0 && (
+            <section class="audio-section" id="listen" aria-label="Audio recordings">
+              {work.recordings.map((recording) => (
+                <div class="audio-card">
+                  <div class="audio-card-title">
+                    <Icon name="headphones" />
+                    <h2>{recording.title}</h2>
+                  </div>
+                  {recording.description && <p>{recording.description}</p>}
+                  <audio controls preload="none" aria-label={recording.title}>
+                    <source src={url(recording.file)} type="audio/mpeg" />
+                    <a href={url(recording.file)}>Download recording</a>
+                  </audio>
+                  <a class="audio-download" href={url(recording.file)} download>
+                    Download MP3
+                  </a>
+                </div>
+              ))}
+            </section>
+          )
+        }
+        {
           work.body &&
             (isPoetry(work.category) ? (
               <div class="poem">{work.body}</div>
@@ -62,29 +84,6 @@ const author = authorFor(work);
               </>
             </figure>
           ))
-        }
-        {
-          work.recordings.length > 0 && (
-            <section class="audio-section" id="listen">
-              <h2>The work, in voice.</h2>
-              {work.recordings.map((recording) => (
-                <div class="audio-card">
-                  <div class="audio-card-title">
-                    <Icon name="headphones" />
-                    <h3>{recording.title}</h3>
-                  </div>
-                  {recording.description && <p>{recording.description}</p>}
-                  <audio controls preload="none" aria-label={recording.title}>
-                    <source src={url(recording.file)} type="audio/mpeg" />
-                    <a href={url(recording.file)}>Download recording</a>
-                  </audio>
-                  <a class="audio-download" href={url(recording.file)} download>
-                    Download MP3
-                  </a>
-                </div>
-              ))}
-            </section>
-          )
         }
         {
           work.about && (

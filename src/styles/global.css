@@ -606,16 +606,26 @@ a {
   background: rgba(0, 0, 0, 0.05);
   filter: none;
 }
-.audio-section,
+.audio-section {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 3rem;
+  scroll-margin-top: 2rem;
+}
 .work-note {
   margin-top: 6rem;
   padding-top: 2rem;
   border-top: 1px solid var(--ink);
 }
-.audio-section h2,
 .work-note h2 {
   font: 400 3.5rem/1 var(--serif);
   margin: 0.8rem 0 2rem;
+}
+.work-note > .eyebrow {
+  display: block;
+}
+.work-note > .prose {
+  margin-top: 1lh;
 }
 .audio-card {
   padding: 1.5rem;
@@ -627,7 +637,7 @@ a {
   align-items: center;
   gap: 0.8rem;
 }
-.audio-card h3 {
+.audio-card h2 {
   font: 500 1.6rem/1 var(--serif);
   margin: 0;
 }
