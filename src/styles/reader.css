@@ -46,7 +46,7 @@
   height: calc(100dvh - 4rem);
   display: grid;
   grid-template-columns: 14rem 1fr;
-  grid-template-rows: minmax(0, 1fr) 3.6rem 4rem;
+  grid-template-rows: minmax(0, 1fr) 4rem;
 }
 .reader-contents {
   grid-row: 1;
@@ -219,8 +219,8 @@
   letter-spacing: 0.1em;
 }
 .reader-progress {
-  grid-column: 1/-1;
-  padding: 0.35rem 3rem 0;
+  flex: 1;
+  min-width: 0;
 }
 .reader-progress input {
   width: 100%;
@@ -243,9 +243,10 @@
   font: 400 0.53rem/1 var(--sans);
   letter-spacing: 0.08em;
   color: #b9b2a3;
-  margin-top: 0.6rem;
+  margin-top: 0.25rem;
 }
 .reader-toolbar {
+  gap: 2rem;
   grid-column: 1/-1;
   border-top: 1px solid #ffffff18;
   display: flex;
@@ -253,14 +254,8 @@
   align-items: center;
   padding: 0 2.2rem;
 }
-.keyboard-hint {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  color: #aaa69b;
-  font-size: 0.95rem;
-}
 .toolbar-actions {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 1.3rem;
@@ -453,9 +448,6 @@
   .reader-wordmark {
     font-size: 1.1rem;
   }
-  .keyboard-hint {
-    font-size: 0.8rem;
-  }
   .toolbar-actions {
     gap: 0.5rem;
   }
@@ -527,6 +519,7 @@
     display: none;
   }
   .reader-toolbar {
+    gap: 1rem;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -535,9 +528,6 @@
     z-index: 20;
     background: #191a19;
     padding: 0 1rem;
-  }
-  .keyboard-hint {
-    display: none;
   }
   .contents-toggle {
     display: flex;

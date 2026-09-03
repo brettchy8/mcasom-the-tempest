@@ -97,25 +97,25 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
         1 / {issue.pageCount}
       </div>
     </section>
-    <div class="reader-progress">
-      <label for="page-range" class="sr-only">Go to PDF page</label><input
-        id="page-range"
-        type="range"
-        min="1"
-        max={issue.pageCount}
-        value="1"
-        disabled
-      /><div class="progress-labels">
-        <span>1</span><span>{Math.round(issue.pageCount / 4)}</span><span
-          >{Math.round(issue.pageCount / 2)}</span
-        ><span>{Math.round(issue.pageCount * 0.75)}</span><span>{issue.pageCount}</span>
-      </div>
-    </div>
     <footer class="reader-toolbar">
       <button class="contents-toggle" aria-controls="reader-contents" aria-expanded="false"
         ><Icon name="menu" size={18} /> Contents</button
-      ><span class="keyboard-hint"><Icon name="keyboard" size={20} /> Press ← → to turn pages</span
-      ><div class="toolbar-actions">
+      >
+      <div class="reader-progress">
+        <label for="page-range" class="sr-only">Go to PDF page</label><input
+          id="page-range"
+          type="range"
+          min="1"
+          max={issue.pageCount}
+          value="1"
+          disabled
+        /><div class="progress-labels">
+          <span>1</span><span>{Math.round(issue.pageCount / 4)}</span><span
+            >{Math.round(issue.pageCount / 2)}</span
+          ><span>{Math.round(issue.pageCount * 0.75)}</span><span>{issue.pageCount}</span>
+        </div>
+      </div>
+      <div class="toolbar-actions">
         <button id="zoom-open" disabled><Icon name="zoom" size={19} /> Zoom</button><button
           id="fullscreen"><Icon name="fullscreen" size={19} /><span>Fullscreen</span></button
         ><a href={url(issue.pdf)} download={`${issue.year}.pdf`} aria-label="Download PDF"
