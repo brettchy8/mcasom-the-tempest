@@ -1,6 +1,6 @@
 ---
 import type { Issue } from '../lib/content';
-import { worksFor, readerUrl, issueUrl, url, preview } from '../lib/content';
+import { worksFor, readerUrl, issueUrl, url } from '../lib/content';
 import WorkCard from './WorkCard.astro';
 import Icon from './Icon.astro';
 interface Props {
@@ -54,9 +54,6 @@ const selected = featured.length ? featured : allWorks.slice(0, 3);
     {
       selected.length ? (
         <>
-          {preview && selected.some((w) => w.demo) && (
-            <p class="sample-label">Sample companion works · Design preview</p>
-          )}
           {selected.map((work) => (
             <WorkCard work={work} />
           ))}

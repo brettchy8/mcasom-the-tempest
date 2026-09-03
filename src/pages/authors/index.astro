@@ -24,11 +24,6 @@ const list = [...authors].sort((a, b) => alphabet.compare(a.name.trim(), b.name.
         <span class="archive-count">{list.length} {list.length === 1 ? 'author' : 'authors'}</span>
       </div>
       {
-        list.some((author) => author.demo) && (
-          <p class="demo-notice">Design preview · Sample author profiles.</p>
-        )
-      }
-      {
         list.length ? (
           <ul class="author-directory-grid">
             {list.map((author) => {

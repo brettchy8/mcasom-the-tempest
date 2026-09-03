@@ -10,7 +10,7 @@ const artwork = work.artworks[0];
 ---
 
 <article class="work-card">
-  <a class="work-card-link" href={url(`/works/${work.slug}/`)}>
+  <a class:list={['work-card-link', { 'has-artwork': artwork }]} href={url(`/works/${work.slug}/`)}>
     <div class="work-card-copy">
       <span class="eyebrow accent">{work.category}</span><h3>{work.title}</h3><p class="byline">
         by {author.name}
@@ -23,12 +23,6 @@ const artwork = work.artworks[0];
         )
       }
     </div>
-    {
-      artwork ? (
-        <img class="work-thumb" src={url(artwork.image)} alt="" loading="lazy" />
-      ) : (
-        <div class="gradient-thumb" aria-hidden="true" />
-      )
-    }
+    {artwork && <img class="work-thumb" src={url(artwork.image)} alt="" loading="lazy" />}
   </a>
 </article>

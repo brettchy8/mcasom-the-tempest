@@ -21,13 +21,6 @@ const author = authorFor(work);
 <Site title={work.title} description={work.excerpt}
   ><main id="main" class="work-page site-main">
     <a class="breadcrumb" href={issueUrl(work.issue)}>← The {work.issue} issue</a>
-    {
-      work.demo && (
-        <p class="demo-notice">
-          Design preview · This work and author are placeholders, not part of the printed issue.
-        </p>
-      )
-    }
     <header class="work-header">
       <div class="eyebrow accent">{work.category} <i>·</i> {work.issue}</div><h1>{work.title}</h1><p
         class="work-author"

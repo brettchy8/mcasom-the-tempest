@@ -93,7 +93,7 @@ const fieldsWork = [
   f('artworks', 'Artwork gallery', 'object', {
     list: true,
     description:
-      'The first artwork is used in previews. Without artwork, a soft gradient appears instead.',
+      'The first artwork is used in previews. Without artwork, the text fills the preview card.',
     fields: [
       image('image', 'Artwork'),
       f('alt', 'Image description', 'string', { required: true }),

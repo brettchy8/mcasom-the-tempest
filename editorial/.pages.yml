@@ -179,8 +179,8 @@ content:
         label: Artwork gallery
         type: object
         list: true
-        description: The first artwork is used in previews. Without artwork, a soft
-          gradient appears instead.
+        description: The first artwork is used in previews. Without artwork, the text
+          fills the preview card.
         fields:
           - name: image
             label: Artwork

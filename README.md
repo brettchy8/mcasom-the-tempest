@@ -44,7 +44,7 @@ CONTENT_DIR=/absolute/path/to/tempest-editorial/content npm run dev
 | Author | Name, permanent slug, biography, optional portrait                                                                              |
 | Site   | Publication name, school, current issue, description, About copy, footer statement                                              |
 
-Every issue, work, and author has Draft/Ready status and a sample flag. Sample content is always excluded from production. A ready work requires a ready author and a published issue. The first PDF page supplies the cover and its proportions. Work excerpts are generated from the opening text, up to 120 characters with `...` for longer text. The first gallery image supplies the thumbnail; works without artwork use a gradient. The Poetry category preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
+Every issue, work, and author has Draft/Ready status and a sample flag. Sample content is always excluded from production. A ready work requires a ready author and a published issue. The first PDF page supplies the cover and its proportions. Work excerpts are generated from the opening text, up to 120 characters with `...` for longer text. The first gallery image supplies the thumbnail; works without artwork use the full card width for text. The Poetry category preserves line breaks and indentation; prose and biographies support sanitized Markdown. Missing portraits use initials. Past PDFs can be published without entering individual works.
 
 ## Hosting
 
