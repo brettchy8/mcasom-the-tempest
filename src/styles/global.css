@@ -478,13 +478,13 @@ a {
 .school-lockup strong {
   display: block;
   font: 500 2rem/1 var(--serif);
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
 }
 .school-lockup div span {
   display: block;
   margin-top: 0.45rem;
   font: 500 0.49rem/1.45 var(--sans);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.33em;
   text-transform: uppercase;
 }
 .footer-bottom {
