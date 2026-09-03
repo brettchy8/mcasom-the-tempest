@@ -29,21 +29,6 @@ const author = authorFor(work);
       </p>
     </header>
     <div class="work-reading-layout">
-      <aside class="work-margin">
-        <span class="eyebrow">The companion</span><p>A closer look at<br />the work.</p>{
-          work.pdfPage && (
-            <a class="text-link" href={readerUrl(work.issue, work.pdfPage)}>
-              Read in issue <Icon name="arrow" size={15} />
-            </a>
-          )
-        }{
-          work.recordings.length > 0 && (
-            <a class="text-link" href="#listen">
-              <Icon name="headphones" size={16} /> Listen to audio
-            </a>
-          )
-        }
-      </aside>
       <div class="work-body">
         {
           work.recordings.length > 0 && (
@@ -85,30 +70,44 @@ const author = authorFor(work);
             </figure>
           ))
         }
+      </div>
+      <aside class="work-margin" aria-label="About this work and its author">
         {
           work.about && (
-            <section class="work-note">
-              <>
-                <span class="eyebrow">About the work</span>
-                <div class="prose" set:html={prose(work.about)} />
-              </>
+            <section class="work-note" aria-labelledby="work-note-title">
+              <h2 class="eyebrow" id="work-note-title">
+                About the work
+              </h2>
+              <div class="prose" set:html={prose(work.about)} />
             </section>
           )
         }
-        <a class="author-teaser" href={url(`/authors/${author.slug}/`)}
-          >{
-            author.portrait ? (
-              <img src={url(author.portrait)} alt={author.name} loading="lazy" />
-            ) : (
-              <span class="avatar-letter">{initials(author.name)}</span>
-            )
-          }<div>
-            <span class="eyebrow">About the author</span><h2>{author.name}</h2><span
-              class="text-link">Meet the author <Icon name="arrow" size={16} /></span
-            >
-          </div></a
-        >
-      </div>
+        <section class="work-author-note" aria-labelledby="work-author-title">
+          <h2 class="eyebrow" id="work-author-title">About the author</h2>
+          <a class="author-teaser" href={url(`/authors/${author.slug}/`)}>
+            {
+              author.portrait ? (
+                <img src={url(author.portrait)} alt="" loading="lazy" />
+              ) : (
+                <span class="avatar-letter" aria-hidden="true">
+                  {initials(author.name)}
+                </span>
+              )
+            }
+            <div>
+              <h3>{author.name}</h3>
+              <span class="text-link">Meet the author <Icon name="arrow" size={16} /></span>
+            </div>
+          </a>
+        </section>
+        {
+          work.pdfPage && (
+            <a class="text-link work-pdf-link" href={readerUrl(work.issue, work.pdfPage)}>
+              Read in issue <Icon name="arrow" size={15} />
+            </a>
+          )
+        }
+      </aside>
     </div>
   </main></Site
 >
