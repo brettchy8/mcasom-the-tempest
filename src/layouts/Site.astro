@@ -60,7 +60,11 @@ const { title, description = site.description, home = false, reader = false } = 
               <p>
                 {site.tagline.split(/\r?\n/).map((line, index) => (
                   <Fragment>
-                    {index > 0 && <br />}
+                    {index > 0 && (
+                      <>
+                        <br />{' '}
+                      </>
+                    )}
                     {line}
                   </Fragment>
                 ))}
