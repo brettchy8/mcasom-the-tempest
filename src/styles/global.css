@@ -386,7 +386,7 @@ a {
   border-bottom: 1px solid var(--ink);
   margin-bottom: 2.2rem;
 }
-.section-heading h2 {
+.section-heading :is(h1, h2) {
   font: 400 clamp(3.6rem, 5vw, 5.7rem)/0.85 var(--serif);
   letter-spacing: -0.04em;
   margin: 0.8rem 0 0;
@@ -866,7 +866,7 @@ a {
   .section-heading {
     align-items: flex-start;
   }
-  .section-heading h2 {
+  .section-heading :is(h1, h2) {
     font-size: 3.5rem;
   }
   .archive-count {

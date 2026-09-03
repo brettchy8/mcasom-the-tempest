@@ -4,8 +4,9 @@ import Icon from './Icon.astro';
 interface Props {
   exclude?: string;
   heading?: string;
+  headingLevel?: 'h1' | 'h2';
 }
-const { exclude, heading = 'From the archive' } = Astro.props;
+const { exclude, heading = 'From the archive', headingLevel: Heading = 'h2' } = Astro.props;
 const list: Issue[] = issues.filter((i) => i.year !== exclude);
 ---
 
@@ -17,7 +18,7 @@ const list: Issue[] = issues.filter((i) => i.year !== exclude);
           <div>
             <>
               <span class="eyebrow">A collection, year by year</span>
-              <h2 id="archive-title">{heading}</h2>
+              <Heading id="archive-title">{heading}</Heading>
             </>
           </div>
           <span class="archive-count">
