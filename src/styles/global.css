@@ -80,7 +80,7 @@ a {
 }
 .wordmark {
   text-decoration: none;
-  font: 400 clamp(4.8rem, 9vw, 8.5rem)/0.9 var(--serif);
+  font: 400 clamp(4.8rem, 9vw, 7.5rem)/.9 var(--serif);
   letter-spacing: -0.07em;
   white-space: nowrap;
 }
