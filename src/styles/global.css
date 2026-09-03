@@ -134,6 +134,19 @@ a {
     color 0.2s ease,
     border-color 0.2s ease;
 }
+button,
+.button,
+.text-link,
+.hero-open {
+  -webkit-user-select: none;
+  user-select: none;
+}
+.footer-tree,
+.school-logo {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
 .button-primary {
   background-color: var(--red);
   color: #fff;

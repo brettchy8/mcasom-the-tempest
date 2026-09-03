@@ -6,6 +6,15 @@
   overflow: hidden;
   background-image: radial-gradient(ellipse at 60% 35%, #2b2c29 0%, #191a19 60%);
 }
+.exit-reader,
+.companion-link,
+.reader-progress,
+.reader-page-status,
+.reader-toolbar,
+.zoom-toolbar {
+  -webkit-user-select: none;
+  user-select: none;
+}
 .reader-header {
   height: 4rem;
   display: flex;
