@@ -5,12 +5,8 @@ import Icon from '../components/Icon.astro';
 ---
 
 <Site title="About"
-  ><main id="main" class="site-main about-page">
-    <div class="page-intro">
-      <span class="eyebrow accent">About the publication</span><h1>
-        Medicine is human.<br /><em>So are its stories.</em>
-      </h1>
-    </div><section class="about-layout">
+  ><main id="main" class="site-main about-page" aria-label="About the publication">
+    <section class="about-layout">
       <figure>
         <img
           src={url(currentIssue.cover)}
