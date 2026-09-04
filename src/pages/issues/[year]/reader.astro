@@ -13,9 +13,15 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
 
 <Site title={`${issue.year} reader`} reader>
   <header class="reader-header">
-    <a class="reader-wordmark" href={url('/')}>THE TEMPEST</a><span>{issue.year} issue</span><a
-      href={issueUrl(issue)}
-      class="exit-reader">Exit reader <Icon name="close" size={14} /></a
+    <a class="reader-wordmark" href={url('/')}>THE TEMPEST</a><div
+      class="reader-page-status"
+      id="page-status"
+      aria-live="polite"
+      aria-atomic="true"
+    >
+      1 / {issue.pageCount}
+    </div><a href={issueUrl(issue)} class="exit-reader"
+      >Exit reader <Icon name="close" size={14} /></a
     >
   </header>
   <main
@@ -96,8 +102,6 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
         aria-label="Scrollable PDF pages"
         hidden
       >
-      </div><div class="reader-page-status" id="page-status" aria-live="polite">
-        1 / {issue.pageCount}
       </div>
     </section>
     <footer class="reader-toolbar">
