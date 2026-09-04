@@ -192,6 +192,7 @@
   top: calc(50% - 2rem);
   width: 2.6rem;
   height: 4rem;
+  padding: 0;
   background: #ffffff05;
   border: 1px solid #ffffff12;
   color: inherit;
