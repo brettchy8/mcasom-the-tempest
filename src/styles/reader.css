@@ -335,6 +335,7 @@
 }
 .contents-toggle {
   flex-shrink: 0;
+  padding-inline: 0;
 }
 .contents-close {
   margin-left: auto;
