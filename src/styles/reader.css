@@ -158,16 +158,21 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 1120px;
-  height: 725px;
-  transform: scale(var(--book-scale, 1));
-  transform-origin: top left;
+  width: 100%;
+  height: 100%;
 }
 .pdf-page {
   background: #f4f0e6;
   overflow: hidden;
   position: relative;
   box-shadow: inset 0 0 1px #0003;
+}
+.pdf-content {
+  position: relative;
+  transform-origin: top left;
+}
+#flip-book .pdf-content {
+  transform: scale(var(--page-scale, 1));
 }
 .pdf-page canvas {
   display: block;

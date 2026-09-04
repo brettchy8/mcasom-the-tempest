@@ -7,6 +7,7 @@ declare module 'page-flip/dist/js/page-flip.module.js' {
     flipNext(): void;
     flipPrev(): void;
     getCurrentPageIndex(): number;
+    update(): void;
     destroy(): void;
   }
 }

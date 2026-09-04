@@ -81,9 +81,16 @@ function setupReader(shell: HTMLElement) {
         const text = document.createElement('div');
         text.className = 'textLayer';
         text.style.setProperty('--total-scale-factor', String(viewport.scale));
-        node.style.width = `${viewport.width}px`;
-        node.style.height = `${viewport.height}px`;
-        node.replaceChildren(canvas, text);
+        const content = document.createElement('div');
+        content.className = 'pdf-content';
+        content.style.width = `${viewport.width}px`;
+        content.style.height = `${viewport.height}px`;
+        content.append(canvas, text);
+        node.replaceChildren(content);
+        if (isContinuous()) {
+          node.style.width = `${viewport.width}px`;
+          node.style.height = `${viewport.height}px`;
+        }
         try {
           await new TextLayer({
             textContentSource: await page.getTextContent(),
@@ -165,14 +172,12 @@ function setupReader(shell: HTMLElement) {
   function fitBook() {
     if (isContinuous()) return;
     const height = 560 / Number(shell.dataset.ratio || 0.773);
-    const scale = Math.min(
-      (desktop.clientWidth - 110) / 1120,
-      desktop.clientHeight / height,
-      1.4,
-    );
+    const scale = Math.min((desktop.clientWidth - 110) / 1120, desktop.clientHeight / height, 1.4);
     frame.style.width = `${1120 * scale}px`;
     frame.style.height = `${height * scale}px`;
-    frame.style.setProperty('--book-scale', String(scale));
+    // Scale only the PDF content. The flip surface must use screen pixels for pointer input.
+    frame.style.setProperty('--page-scale', String(scale));
+    flip?.update();
   }
 
   async function mount() {
@@ -217,10 +222,15 @@ function setupReader(shell: HTMLElement) {
       book.id = 'flip-book';
       book.append(...pageNodes);
       frame.replaceChildren(book);
+      fitBook();
       flip = new PageFlip(book, {
         width: 560,
         height: 560 / Number(shell.dataset.ratio),
-        size: 'fixed',
+        size: 'stretch',
+        minWidth: 100,
+        maxWidth: 784,
+        minHeight: 100,
+        maxHeight: 784 / Number(shell.dataset.ratio),
         showCover: true,
         usePortrait: false,
         autoSize: false,
