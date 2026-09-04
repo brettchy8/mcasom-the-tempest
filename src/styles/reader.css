@@ -82,6 +82,7 @@
   color: inherit;
   text-align: left;
   display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
   font: 400 1.02rem/1.2 var(--serif);
