@@ -167,7 +167,7 @@ function setupReader(shell: HTMLElement) {
     const height = 560 / Number(shell.dataset.ratio || 0.773);
     const scale = Math.min(
       (desktop.clientWidth - 110) / 1120,
-      (desktop.clientHeight - 18) / height,
+      desktop.clientHeight / height,
       1.4,
     );
     frame.style.width = `${1120 * scale}px`;
