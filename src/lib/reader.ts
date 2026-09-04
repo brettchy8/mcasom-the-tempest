@@ -11,7 +11,7 @@ function setupReader(shell: HTMLElement) {
   const mobileQuery = matchMedia('(max-width: 760px)');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const desktop = el('desktop-reader'),
-    mobile = el('mobile-pages'),
+    continuous = el('continuous-pages'),
     frame = el('book-frame');
   const loading = el('reader-loading'),
     error = el('reader-error');
@@ -19,10 +19,9 @@ function setupReader(shell: HTMLElement) {
     status = el('page-status');
   const prev = document.querySelector<HTMLButtonElement>('.previous-page')!;
   const next = document.querySelector<HTMLButtonElement>('.next-page')!;
-  const zoomOpen = el<HTMLButtonElement>('zoom-open'),
-    zoom = el<HTMLDialogElement>('zoom-dialog');
-  const zoomPage = el<HTMLSelectElement>('zoom-page'),
-    zoomLevel = el<HTMLSelectElement>('zoom-level');
+  const viewToggle = el<HTMLButtonElement>('view-toggle');
+  let scrollView = false;
+  const isContinuous = () => mobileQuery.matches || scrollView;
   const contents = el('reader-contents'),
     contentsToggle = document.querySelector<HTMLButtonElement>('.contents-toggle')!;
   let pdf: PDFDocumentProxy,
@@ -117,11 +116,7 @@ function setupReader(shell: HTMLElement) {
 
   function discardDistantPages() {
     for (const [node, number] of rendered)
-      if (
-        !zoom.contains(node) &&
-        Math.abs(number - current) > (mobileQuery.matches ? 5 : 6) &&
-        !inflight.has(node)
-      ) {
+      if (Math.abs(number - current) > (isContinuous() ? 5 : 6) && !inflight.has(node)) {
         node.querySelectorAll('canvas').forEach((c) => {
           c.width = 1;
           c.height = 1;
@@ -132,17 +127,21 @@ function setupReader(shell: HTMLElement) {
   }
 
   async function showNearby() {
+    const version = generation;
     const pages = [current, current + 1, current - 1, current + 2, current - 2, current + 3].filter(
       (n) => n >= 1 && n <= pageCount,
     );
-    for (const number of pages) await renderPage(pageNodes[number - 1], number, 560);
+    for (const number of pages) {
+      if (version !== generation) return;
+      await renderPage(pageNodes[number - 1], number, 560);
+    }
+    if (version !== generation) return;
     discardDistantPages();
   }
 
   function update(page: number) {
     current = Math.max(1, Math.min(pageCount, page));
-    const right =
-      !mobileQuery.matches && current > 1 && current < pageCount ? ` – ${current + 1}` : '';
+    const right = !isContinuous() && current > 1 && current < pageCount ? ` – ${current + 1}` : '';
     status.textContent = `${current}${right} / ${pageCount}`;
     frame.classList.toggle('front-cover', current === 1);
     frame.classList.toggle('back-cover', current === pageCount && pageCount % 2 === 0);
@@ -159,12 +158,12 @@ function setupReader(shell: HTMLElement) {
         else node.removeAttribute('aria-current');
       }
     });
-    if (!mobileQuery.matches) void showNearby();
+    if (!isContinuous()) void showNearby();
     else discardDistantPages();
   }
 
   function fitBook() {
-    if (mobileQuery.matches) return;
+    if (isContinuous()) return;
     const height = 560 / Number(shell.dataset.ratio || 0.773);
     const scale = Math.min(
       (desktop.clientWidth - 110) / 1120,
@@ -184,14 +183,14 @@ function setupReader(shell: HTMLElement) {
     flip?.destroy();
     flip = null;
     rendered.clear();
-    mobile.replaceChildren();
+    continuous.replaceChildren();
     frame.replaceChildren();
-    desktop.hidden = mobileQuery.matches;
-    mobile.hidden = !mobileQuery.matches;
+    desktop.hidden = isContinuous();
+    continuous.hidden = !isContinuous();
     pageNodes = Array.from({ length: pageCount }, (_, i) => pageElement(i + 1));
-    if (mobileQuery.matches) {
-      mobile.replaceChildren(...pageNodes);
-      const pageWidth = mobile.clientWidth;
+    if (isContinuous()) {
+      continuous.replaceChildren(...pageNodes);
+      const pageWidth = continuous.clientWidth;
       for (const node of pageNodes) {
         node.style.width = `${pageWidth}px`;
         node.style.height = `${pageWidth / Number(shell.dataset.ratio)}px`;
@@ -206,12 +205,12 @@ function setupReader(shell: HTMLElement) {
                 pageWidth,
               );
         },
-        { rootMargin: '800px 0px' },
+        { root: mobileQuery.matches ? null : continuous, rootMargin: '800px 0px' },
       );
       pageNodes.forEach((node) => observer!.observe(node));
       await renderPage(pageNodes[target - 1], target, pageWidth);
       if (version !== generation) return;
-      if (target > 1) pageNodes[target - 1].scrollIntoView({ behavior: 'instant', block: 'start' });
+      scrollToPage(target);
       current = target;
     } else {
       const book = document.createElement('div');
@@ -244,14 +243,33 @@ function setupReader(shell: HTMLElement) {
     update(current);
   }
 
+  function scrollToPage(page: number) {
+    const node = pageNodes[page - 1];
+    if (mobileQuery.matches) node.scrollIntoView({ behavior: 'instant', block: 'start' });
+    else
+      continuous.scrollTo({
+        top:
+          continuous.scrollTop +
+          node.getBoundingClientRect().top -
+          continuous.getBoundingClientRect().top,
+        behavior: 'instant',
+      });
+  }
+
+  function setContents(open: boolean, restoreFocus = false) {
+    contents.hidden = !open;
+    contentsToggle.setAttribute('aria-expanded', String(open));
+    if (open) contents.querySelector<HTMLButtonElement>('.contents-close')!.focus();
+    else if (restoreFocus) contentsToggle.focus();
+  }
+
   function goTo(page: number) {
     const target = Math.max(1, Math.min(pageCount, page));
-    if (mobileQuery.matches) {
-      pageNodes[target - 1].scrollIntoView({ behavior: 'instant', block: 'start' });
+    if (isContinuous()) {
+      scrollToPage(target);
       update(target);
     } else flip?.turnToPage(target - 1);
-    contents.classList.remove('is-open');
-    contentsToggle.setAttribute('aria-expanded', 'false');
+    if (!contents.hidden) setContents(false, true);
   }
 
   async function start() {
@@ -271,22 +289,16 @@ function setupReader(shell: HTMLElement) {
       pdf = await task.promise;
       pageCount = pdf.numPages;
       progress.max = String(pageCount);
-      for (let p = 1; p <= pageCount; p++) {
-        const option = document.createElement('option');
-        option.value = String(p);
-        option.textContent = String(p);
-        zoomPage.append(option);
-      }
       loading.hidden = true;
       await mount();
       progress.disabled = false;
-      zoomOpen.disabled = false;
+      viewToggle.disabled = false;
     } catch (e) {
       console.error('PDF reader failed', e);
       loading.hidden = true;
       error.hidden = false;
       desktop.hidden = true;
-      mobile.hidden = true;
+      continuous.hidden = true;
     }
   }
   el('reader-retry').addEventListener('click', () => location.reload());
@@ -305,30 +317,21 @@ function setupReader(shell: HTMLElement) {
     }),
   );
   document.addEventListener('keydown', (event) => {
-    if (!pdf || zoom.open || /INPUT|SELECT|TEXTAREA/.test((event.target as HTMLElement).tagName))
-      return;
-    if (event.key === 'ArrowRight' && !mobileQuery.matches) {
+    if (!pdf || /INPUT|SELECT|TEXTAREA/.test((event.target as HTMLElement).tagName)) return;
+    if (event.key === 'ArrowRight' && !isContinuous()) {
       event.preventDefault();
       next.click();
     }
-    if (event.key === 'ArrowLeft' && !mobileQuery.matches) {
+    if (event.key === 'ArrowLeft' && !isContinuous()) {
       event.preventDefault();
       prev.click();
     }
-    if (event.key === 'Escape') {
-      contents.classList.remove('is-open');
-      contentsToggle.setAttribute('aria-expanded', 'false');
-    }
+    if (event.key === 'Escape' && !contents.hidden) setContents(false, true);
   });
-  contentsToggle.addEventListener('click', () => {
-    const open = contents.classList.toggle('is-open');
-    contentsToggle.setAttribute('aria-expanded', String(open));
-  });
-  document.querySelector('.contents-close')!.addEventListener('click', () => {
-    contents.classList.remove('is-open');
-    contentsToggle.setAttribute('aria-expanded', 'false');
-    contentsToggle.focus();
-  });
+  contentsToggle.addEventListener('click', () => setContents(contents.hidden));
+  document
+    .querySelector('.contents-close')!
+    .addEventListener('click', () => setContents(false, true));
   el('fullscreen').addEventListener('click', async () => {
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
@@ -338,34 +341,17 @@ function setupReader(shell: HTMLElement) {
     }
   });
   if (!document.fullscreenEnabled) el('fullscreen').hidden = true;
-  let zoomVersion = 0;
-  async function drawZoom() {
-    const version = ++zoomVersion;
-    const host = el('zoom-container');
-    host.querySelectorAll<HTMLElement>('.pdf-page').forEach((node) => rendered.delete(node));
-    host.replaceChildren();
-    const node = pageElement(Number(zoomPage.value));
-    host.append(node);
-    const width = Math.max(550, Math.min(innerWidth - 90, 850)) * Number(zoomLevel.value);
-    host.style.width = `${width}px`;
-    await renderPage(node, Number(zoomPage.value), width, true);
-    if (version !== zoomVersion) node.remove();
-  }
-  zoomOpen.addEventListener('click', () => {
-    zoomPage.value = String(current);
-    zoom.showModal();
-    void drawZoom();
-  });
-  el('zoom-close').addEventListener('click', () => zoom.close());
-  zoomPage.addEventListener('change', () => void drawZoom());
-  zoomLevel.addEventListener('change', () => void drawZoom());
-  zoom.addEventListener('close', () => {
-    zoomVersion++;
-    el('zoom-container')
-      .querySelectorAll<HTMLElement>('.pdf-page')
-      .forEach((node) => rendered.delete(node));
-    el('zoom-container').replaceChildren();
-    zoomOpen.focus();
+  viewToggle.addEventListener('click', async () => {
+    scrollView = !scrollView;
+    viewToggle.setAttribute('aria-pressed', String(scrollView));
+    el('view-label').textContent = scrollView ? 'Flipbook' : 'Zoom';
+    viewToggle.title = scrollView ? 'Return to the flipbook' : 'Read continuously at page width';
+    viewToggle.disabled = true;
+    try {
+      await mount();
+    } finally {
+      viewToggle.disabled = false;
+    }
   });
   let resizeTimer: ReturnType<typeof setTimeout>;
   let lastWidth = innerWidth,
@@ -378,23 +364,25 @@ function setupReader(shell: HTMLElement) {
       const widthChanged = lastWidth !== innerWidth;
       wasMobile = mobileQuery.matches;
       lastWidth = innerWidth;
-      if (modeChanged || (wasMobile && widthChanged)) void mount();
-      else if (!wasMobile) fitBook();
+      if (modeChanged || (isContinuous() && widthChanged)) void mount();
+      else fitBook();
     }, 250);
   });
   let scrollTick = false;
-  window.addEventListener(
-    'scroll',
-    () => {
-      if (!pdf || mounting || !mobileQuery.matches || scrollTick) return;
-      scrollTick = true;
-      requestAnimationFrame(() => {
-        const node = pageNodes.find((n) => n.getBoundingClientRect().bottom > innerHeight * 0.35);
-        if (node && Number(node.dataset.page) !== current) update(Number(node.dataset.page));
-        scrollTick = false;
-      });
-    },
-    { passive: true },
-  );
+  function trackScroll() {
+    if (!pdf || mounting || !isContinuous() || scrollTick) return;
+    scrollTick = true;
+    requestAnimationFrame(() => {
+      const bounds = continuous.getBoundingClientRect();
+      const threshold = mobileQuery.matches
+        ? innerHeight * 0.35
+        : bounds.top + bounds.height * 0.35;
+      const node = pageNodes.find((n) => n.getBoundingClientRect().bottom > threshold);
+      if (node && Number(node.dataset.page) !== current) update(Number(node.dataset.page));
+      scrollTick = false;
+    });
+  }
+  window.addEventListener('scroll', trackScroll, { passive: true });
+  continuous.addEventListener('scroll', trackScroll, { passive: true });
   void start();
 }

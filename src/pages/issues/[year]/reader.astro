@@ -28,7 +28,7 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
     data-assets={url('/pdf-assets/')}
     data-year={issue.year}
   >
-    <aside class="reader-contents" id="reader-contents" aria-label="Issue contents">
+    <aside class="reader-contents" id="reader-contents" aria-label="Issue contents" hidden>
       <div class="contents-heading">
         <Icon name="menu" size={18} /><h1>Contents</h1><button
           class="contents-close"
@@ -89,11 +89,14 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
           disabled><Icon name="right" size={30} /></button
         >
       </div>
-      <div class="mobile-pages" id="mobile-pages" hidden></div><div
-        class="reader-page-status"
-        id="page-status"
-        aria-live="polite"
+      <div
+        class="continuous-pages"
+        id="continuous-pages"
+        tabindex="0"
+        aria-label="Scrollable PDF pages"
+        hidden
       >
+      </div><div class="reader-page-status" id="page-status" aria-live="polite">
         1 / {issue.pageCount}
       </div>
     </section>
@@ -116,25 +119,19 @@ const categories = [...new Set(linkedWorks.map((w) => w.category))];
         </div>
       </div>
       <div class="toolbar-actions">
-        <button id="zoom-open" disabled><Icon name="zoom" size={19} /> Zoom</button><button
-          id="fullscreen"><Icon name="fullscreen" size={19} /><span>Fullscreen</span></button
+        <button
+          id="view-toggle"
+          aria-pressed="false"
+          aria-controls="continuous-pages"
+          title="Read continuously at page width"
+          disabled><Icon name="zoom" size={19} /> <span id="view-label">Zoom</span></button
+        ><button id="fullscreen"><Icon name="fullscreen" size={19} /><span>Fullscreen</span></button
         ><a href={url(issue.pdf)} download={`${issue.year}.pdf`} aria-label="Download PDF"
           ><Icon name="download" size={19} /><span>Download PDF</span></a
         >
       </div>
     </footer>
   </main>
-  <dialog id="zoom-dialog" class="zoom-dialog">
-    <div class="zoom-toolbar">
-      <label>Page <select id="zoom-page" aria-label="Page to zoom"></select></label><label
-        >Magnification <select id="zoom-level"
-          ><option value="1">100%</option><option value="1.5">150%</option><option value="2"
-            >200%</option
-          ></select
-        ></label
-      ><button id="zoom-close" aria-label="Close zoom"><Icon name="close" /></button>
-    </div><div class="zoom-scroll"><div id="zoom-container"></div></div>
-  </dialog>
   <noscript
     ><p class="no-script">
       The interactive reader needs JavaScript. <a href={url(issue.pdf)}>Open the original PDF</a>.
